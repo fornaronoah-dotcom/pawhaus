@@ -58,127 +58,130 @@ export function ProductTabs({
   const specRows = specs.filter(([, v]) => Boolean(v)) as [string, string][];
 
   return (
-    <div>
-      {/* Tab-balk */}
-      <div className="flex flex-wrap gap-x-8 gap-y-2 border-b">
-        {tabs.map((t) => (
-          <button
-            key={t}
-            type="button"
-            onClick={() => setActive(t)}
-            className={cn(
-              "relative pb-3 text-sm font-medium transition-colors",
-              active === t ? "text-foreground" : "text-muted-foreground hover:text-foreground",
-            )}
-          >
-            {t}
-            {active === t && (
-              <motion.span
-                layoutId="pdp-tab-underline"
-                className="bg-primary absolute inset-x-0 -bottom-px h-0.5 rounded-full"
-                transition={{ duration: 0.25, ease: "easeOut" }}
-              />
-            )}
-          </button>
-        ))}
-      </div>
+    <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:gap-12">
+      {/* Links: tabs + wisselende inhoud */}
+      <div>
+        {/* Tab-balk */}
+        <div className="flex flex-wrap gap-x-8 gap-y-2 border-b">
+          {tabs.map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setActive(t)}
+              className={cn(
+                "relative pb-3 text-sm font-medium transition-colors",
+                active === t ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              {t}
+              {active === t && (
+                <motion.span
+                  layoutId="pdp-tab-underline"
+                  className="bg-primary absolute inset-x-0 -bottom-px h-0.5 rounded-full"
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                />
+              )}
+            </button>
+          ))}
+        </div>
 
-      <div className="pt-8">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={active}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-          >
-            {active === "Beschrijving" && (
-              <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:gap-12">
+        <div className="pt-8">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+            >
+              {active === "Beschrijving" && (
                 <div
                   className="prose-sm text-muted-foreground max-w-none space-y-3 text-sm leading-relaxed [&_h3]:text-foreground [&_h3]:mt-5 [&_h3]:mb-1.5 [&_h3]:text-base [&_h3]:font-semibold [&_li]:my-0.5 [&_strong]:text-foreground [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5"
                   dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
                 />
-                <div className="relative min-h-[320px] overflow-hidden rounded-3xl bg-[#FFE3D3] lg:h-full">
-                  <Image
-                    src={editorialImage}
-                    alt=""
-                    fill
-                    sizes="(min-width: 1024px) 33vw, 100vw"
-                    className="object-cover object-right"
-                  />
-                  {/* Perzik links voor leesbaarheid van de tekst */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#FFE3D3] via-[#FFE3D3]/70 to-transparent" />
-                  {/* Hartje boven-links (zelfde als hero) */}
-                  <Image
-                    src="/images/heart.png"
-                    alt=""
-                    width={64}
-                    height={72}
-                    className="absolute top-7 left-7 z-10 h-8 w-auto"
-                  />
-                  {/* Tekst verticaal in het midden */}
-                  <div className="absolute top-1/2 left-7 z-10 max-w-[58%] -translate-y-1/2">
-                    <p className="font-poppins text-2xl leading-snug font-semibold">
-                      {edTitle}
-                    </p>
-                    <p className="text-foreground/80 mt-2 text-sm">{edSub}</p>
-                  </div>
-                </div>
-              </div>
-            )}
+              )}
 
-            {active === "Specificaties" &&
-              (specRows.length > 0 ? (
-                <dl className="max-w-xl text-sm">
-                  {specRows.map(([k, v]) => (
-                    <div
-                      key={k}
-                      className="flex justify-between gap-4 border-b border-dashed py-2.5 last:border-0"
-                    >
-                      <dt className="text-muted-foreground">{k}</dt>
-                      <dd className="font-medium">{v}</dd>
-                    </div>
-                  ))}
-                </dl>
-              ) : (
-                <p className="text-muted-foreground text-sm">
-                  Geen specificaties beschikbaar.
-                </p>
-              ))}
+              {active === "Specificaties" &&
+                (specRows.length > 0 ? (
+                  <dl className="text-sm">
+                    {specRows.map(([k, v]) => (
+                      <div
+                        key={k}
+                        className="flex justify-between gap-4 border-b border-dashed py-2.5 last:border-0"
+                      >
+                        <dt className="text-muted-foreground">{k}</dt>
+                        <dd className="font-medium">{v}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                ) : (
+                  <p className="text-muted-foreground text-sm">
+                    Geen specificaties beschikbaar.
+                  </p>
+                ))}
 
-            {active === "Levering" && (
-              <ul className="max-w-xl space-y-4 text-sm">
-                <li className="flex gap-3">
-                  <Truck className="text-primary mt-0.5 size-5 shrink-0" />
-                  <span>
-                    <span className="font-medium">Gratis verzending vanaf € 50.</span>{" "}
-                    <span className="text-muted-foreground">
-                      Onder € 50 reken je een vaste bijdrage af.
+              {active === "Levering" && (
+                <ul className="space-y-4 text-sm">
+                  <li className="flex gap-3">
+                    <Truck className="text-primary mt-0.5 size-5 shrink-0" />
+                    <span>
+                      <span className="font-medium">Gratis verzending vanaf € 50.</span>{" "}
+                      <span className="text-muted-foreground">
+                        Onder € 50 reken je een vaste bijdrage af.
+                      </span>
                     </span>
-                  </span>
-                </li>
-                <li className="flex gap-3">
-                  <PackageCheck className="text-primary mt-0.5 size-5 shrink-0" />
-                  <span>
-                    <span className="font-medium">Voor 15:00 besteld, vandaag verzonden.</span>{" "}
-                    <span className="text-muted-foreground">
-                      Levering doorgaans binnen 2–4 werkdagen.
+                  </li>
+                  <li className="flex gap-3">
+                    <PackageCheck className="text-primary mt-0.5 size-5 shrink-0" />
+                    <span>
+                      <span className="font-medium">Voor 15:00 besteld, vandaag verzonden.</span>{" "}
+                      <span className="text-muted-foreground">
+                        Levering doorgaans binnen 2–4 werkdagen.
+                      </span>
                     </span>
-                  </span>
-                </li>
-                <li className="flex gap-3">
-                  <RotateCcw className="text-primary mt-0.5 size-5 shrink-0" />
-                  <span>
-                    <span className="font-medium">30 dagen retourrecht.</span>{" "}
-                    <span className="text-muted-foreground">
-                      Niet tevreden? Stuur eenvoudig terug.
+                  </li>
+                  <li className="flex gap-3">
+                    <RotateCcw className="text-primary mt-0.5 size-5 shrink-0" />
+                    <span>
+                      <span className="font-medium">30 dagen retourrecht.</span>{" "}
+                      <span className="text-muted-foreground">
+                        Niet tevreden? Stuur eenvoudig terug.
+                      </span>
                     </span>
-                  </span>
-                </li>
-              </ul>
-            )}
-          </motion.div>
-        </AnimatePresence>
+                  </li>
+                </ul>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* Rechts: editorial-kaart — altijd zichtbaar, ongeacht de tab */}
+      <div className="relative min-h-[320px] overflow-hidden rounded-3xl bg-[#FFE3D3] lg:h-full">
+        <Image
+          src={editorialImage}
+          alt=""
+          fill
+          sizes="(min-width: 1024px) 33vw, 100vw"
+          className="object-cover object-right"
+        />
+        {/* Perzik links voor leesbaarheid van de tekst */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#FFE3D3] via-[#FFE3D3]/70 to-transparent" />
+        {/* Hartje boven-links (zelfde als hero) */}
+        <Image
+          src="/images/heart.png"
+          alt=""
+          width={64}
+          height={72}
+          className="absolute top-7 left-7 z-10 h-8 w-auto"
+        />
+        {/* Tekst verticaal in het midden */}
+        <div className="absolute top-1/2 left-7 z-10 max-w-[58%] -translate-y-1/2">
+          <p className="font-poppins text-2xl leading-snug font-semibold">
+            {edTitle}
+          </p>
+          <p className="text-foreground/80 mt-2 text-sm">{edSub}</p>
+        </div>
       </div>
     </div>
   );

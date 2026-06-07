@@ -5,7 +5,6 @@ import { ChevronRight } from "lucide-react";
 import { ProductView } from "@/components/ProductView";
 import { QuickBenefits } from "@/components/QuickBenefits";
 import { ProductTabs } from "@/components/ProductTabs";
-import { TrustBlock } from "@/components/TrustBlock";
 import { BoughtTogether } from "@/components/BoughtTogether";
 import { RecentlyViewed } from "@/components/RecentlyViewed";
 import { NewsletterSection } from "@/components/NewsletterSection";
@@ -114,9 +113,6 @@ export default async function ProductPage({
             : "/images/editorial-kat.jpg"
         }
       />
-
-      {/* Trust */}
-      <TrustBlock />
 
       {/* Vaak samen gekocht */}
       <BoughtTogether products={crossSell} bundleHint />
