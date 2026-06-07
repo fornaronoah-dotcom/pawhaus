@@ -77,7 +77,7 @@ export default async function ProductPage({
   const firstSku = product.variants[0]?.sku ?? null;
 
   return (
-    <div className="mx-auto max-w-7xl space-y-20 px-4 py-8 pb-28 sm:px-6 lg:px-8 lg:pb-12">
+    <div className="mx-auto max-w-7xl space-y-20 px-4 pt-28 pb-28 sm:px-6 lg:px-8 lg:pb-12">
       {/* Kruimelpad */}
       <nav className="text-muted-foreground -mb-12 flex flex-wrap items-center gap-1 text-sm">
         <Link href="/" className="hover:text-foreground">
