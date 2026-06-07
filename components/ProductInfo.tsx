@@ -1,14 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import {
-  ChevronRight,
-  Headphones,
-  Heart,
-  RotateCcw,
-  ShieldCheck,
-  Truck,
-} from "lucide-react";
+import { Headphones, Heart, RotateCcw, ShieldCheck, Truck } from "lucide-react";
 import { toast } from "sonner";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { QuantitySelector } from "@/components/QuantitySelector";
@@ -197,8 +190,8 @@ export function ProductInfo({
         </button>
       </div>
 
-      {/* Leveringsbox */}
-      <div className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3.5 shadow-sm">
+      {/* Levering (zonder kader) */}
+      <div className="flex items-center gap-3">
         <Truck className="text-sky size-5 shrink-0" />
         <div className="min-w-0 flex-1 text-sm">
           <p className="font-medium">Gratis verzending vanaf € 50</p>
@@ -206,7 +199,6 @@ export function ProductInfo({
             Voor 15:00 besteld, vandaag verzonden
           </p>
         </div>
-        <ChevronRight className="text-muted-foreground size-4 shrink-0" />
       </div>
 
       {/* Trust-rij */}

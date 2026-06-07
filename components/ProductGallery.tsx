@@ -47,10 +47,8 @@ export function ProductGallery({
               onClick={() => setActive(index)}
               aria-label={`Afbeelding ${index + 1} tonen`}
               className={cn(
-                "relative aspect-square size-16 shrink-0 overflow-hidden rounded-2xl bg-white ring-1 transition-all duration-200 lg:size-20",
-                index === active
-                  ? "ring-primary ring-2"
-                  : "ring-black/5 hover:ring-foreground/20",
+                "relative aspect-square size-16 shrink-0 overflow-hidden rounded-2xl transition-all duration-200 lg:size-20",
+                index === active ? "opacity-100" : "opacity-50 hover:opacity-100",
               )}
             >
               <Image
@@ -68,7 +66,7 @@ export function ProductGallery({
 
       {/* Hoofdfoto */}
       <div
-        className="group relative aspect-square flex-1 cursor-zoom-in overflow-hidden rounded-[32px] bg-white"
+        className="group relative aspect-square flex-1 cursor-zoom-in overflow-hidden rounded-[32px]"
         onClick={() => setZoom((z) => !z)}
       >
         <AnimatePresence mode="wait">
