@@ -1,0 +1,50 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: pawhaus:latest
+    container_name: pawhaus
+    restart: unless-stopped
+    # Alleen lokaal op de host beschikbaar; Nginx (op de host) doet de reverse proxy.
+    ports:
+      - "127.0.0.1:3000:3000"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      # Binnen het Docker-netwerk bereik je Postgres via de servicenaam.
+      - DATABASE_URL=postgres://${POSTGRES_USER:-pawhaus}:${POSTGRES_PASSWORD:-pawhaus}@postgres:5432/${POSTGRES_DB:-pawhaus}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        ["CMD", "wget", "--quiet", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: pawhaus-db
+    restart: unless-stopped
+    # Alleen lokaal op de host (5432); niet publiek blootgesteld.
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-pawhaus}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pawhaus}
+      POSTGRES_DB: ${POSTGRES_DB:-pawhaus}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-pawhaus} -d ${POSTGRES_DB:-pawhaus}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  pgdata:

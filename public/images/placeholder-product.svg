@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800" role="img" aria-label="Productafbeelding volgt">
+  <rect width="800" height="800" fill="#eaf3f8"/>
+  <rect x="0.5" y="0.5" width="799" height="799" fill="none" stroke="#d4e6ef"/>
+  <g fill="#b4d4e3" transform="translate(400 350)">
+    <ellipse cx="-70" cy="-30" rx="34" ry="44"/>
+    <ellipse cx="70" cy="-30" rx="34" ry="44"/>
+    <ellipse cx="-130" cy="40" rx="30" ry="40"/>
+    <ellipse cx="130" cy="40" rx="30" ry="40"/>
+    <ellipse cx="0" cy="80" rx="78" ry="62"/>
+  </g>
+  <text x="400" y="540" font-family="Geist, Arial, sans-serif" font-size="30" fill="#6b93a8" text-anchor="middle" letter-spacing="1">Pawhaus</text>
+  <text x="400" y="582" font-family="Geist, Arial, sans-serif" font-size="20" fill="#9bbccb" text-anchor="middle">afbeelding volgt</text>
+</svg>
