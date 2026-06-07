@@ -122,7 +122,7 @@ export default async function ProductPage({
         {/* Carrousels */}
         <div className="space-y-14">
           {/* Vaak samen gekocht */}
-          <BoughtTogether products={crossSell} bundleHint />
+          <BoughtTogether products={crossSell} />
 
           {/* Recent bekeken */}
           <RecentlyViewed
