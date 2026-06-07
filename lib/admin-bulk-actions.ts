@@ -10,6 +10,11 @@ import {
   type ProductStatus,
 } from "@/lib/admin-products";
 import { setStatusMany } from "@/lib/admin/product-status";
+import {
+  getStorefrontPublicationId,
+  publishToPublication,
+  PublicationScopeError,
+} from "@/lib/admin-publications";
 import { logActivity } from "@/lib/admin/activity";
 import { SEO_IMPROVE_TAG, AI_REVIEW_TAG } from "@/lib/admin/bulk-constants";
 import type { OptStatus } from "@/lib/db/schema";
@@ -132,6 +137,37 @@ export async function bulkAddAiReview(gids: string[]): Promise<BulkResult> {
     targetType: "bulk",
     severity: res.failed ? "warn" : "info",
     message: `AI-review tag + status 'klaar_voor_ai' bij ${res.succeeded}/${res.processed}`,
+  });
+  return res;
+}
+
+/* ----------------------- Publiceren naar storefront -------------------- */
+
+/** Publiceert geselecteerde producten naar het Headless-verkoopkanaal. */
+export async function bulkPublishToStorefront(gids: string[]): Promise<BulkResult> {
+  const user = await requireAdmin();
+
+  let pubId: string;
+  try {
+    pubId = await getStorefrontPublicationId();
+  } catch (err) {
+    const error =
+      err instanceof PublicationScopeError
+        ? "Scope read_publications/write_publications nodig — autoriseer de app opnieuw."
+        : err instanceof Error
+          ? err.message
+          : "Kon verkoopkanaal niet bepalen.";
+    return { ok: false, processed: gids.length, succeeded: 0, failed: gids.length, errors: [error] };
+  }
+
+  const res = await runPerProduct(gids, (gid) => publishToPublication(gid, pubId));
+  revalidateStorefront();
+  await logActivity({
+    actor: user.id,
+    action: "bulk.publish-storefront",
+    targetType: "bulk",
+    severity: res.failed ? "warn" : "info",
+    message: `Naar storefront gepubliceerd: ${res.succeeded}/${res.processed}`,
   });
   return res;
 }

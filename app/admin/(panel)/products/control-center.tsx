@@ -19,6 +19,7 @@ import {
   bulkMarkSeoToImprove,
   bulkAddAiReview,
   bulkSetOptStatus,
+  bulkPublishToStorefront,
   type BulkResult,
 } from "@/lib/admin-bulk-actions";
 
@@ -276,6 +277,9 @@ export function ProductControlCenter({
           </Button>
           <Button size="sm" variant="outline" disabled={pending} onClick={() => runBulk("Op concept", () => bulkSetShopifyStatus(selectedGids, "DRAFT"))}>
             Op concept
+          </Button>
+          <Button size="sm" variant="outline" disabled={pending} onClick={() => runBulk("Gepubliceerd naar storefront", () => bulkPublishToStorefront(selectedGids))}>
+            → Storefront
           </Button>
           <span className="mx-1 h-4 w-px bg-border" />
           <Button size="sm" variant="outline" disabled={pending} onClick={() => runBulk("SEO gemarkeerd", () => bulkMarkSeoToImprove(selectedGids))}>
