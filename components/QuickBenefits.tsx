@@ -23,12 +23,10 @@ export function QuickBenefits() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
             transition={{ duration: 0.28, delay: i * 0.05, ease: "easeOut" }}
-            className="flex items-center gap-4"
+            className="flex flex-col items-center gap-2 text-center"
           >
-            <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[#FFE3D3] text-[#F05A37]">
-              <Icon className="size-6" strokeWidth={1.75} />
-            </span>
-            <div className="min-w-0">
+            <Icon className="size-7 text-[#F05A37]" strokeWidth={1.75} />
+            <div>
               <p className="text-sm leading-tight font-semibold">{c.title}</p>
               <p className="text-muted-foreground mt-0.5 text-xs leading-snug">
                 {c.sub}
