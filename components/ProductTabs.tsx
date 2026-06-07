@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { Heart, PackageCheck, RotateCcw, Truck } from "lucide-react";
+import { PackageCheck, RotateCcw, Truck } from "lucide-react";
 import {
   dierFromTags,
   parseAfmetingen,
@@ -98,24 +98,30 @@ export function ProductTabs({
                   className="prose-sm text-muted-foreground max-w-none space-y-3 text-sm leading-relaxed [&_h3]:text-foreground [&_h3]:mt-5 [&_h3]:mb-1.5 [&_h3]:text-base [&_h3]:font-semibold [&_li]:my-0.5 [&_strong]:text-foreground [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5"
                   dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
                 />
-                <div className="relative min-h-[280px] overflow-hidden rounded-3xl bg-[#FFE3D3]">
-                  <div className="relative z-10 max-w-[62%] p-7">
-                    <Heart className="text-primary size-7" />
-                    <p className="font-poppins mt-3 text-2xl leading-snug font-semibold">
+                <div className="relative min-h-[320px] overflow-hidden rounded-3xl bg-[#FFE3D3] lg:h-full">
+                  <Image
+                    src={editorialImage}
+                    alt=""
+                    fill
+                    sizes="(min-width: 1024px) 33vw, 100vw"
+                    className="object-cover object-right"
+                  />
+                  {/* Perzik links voor leesbaarheid van de tekst */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#FFE3D3] via-[#FFE3D3]/70 to-transparent" />
+                  {/* Hartje boven-links (zelfde als hero) */}
+                  <Image
+                    src="/images/heart.png"
+                    alt=""
+                    width={64}
+                    height={72}
+                    className="absolute top-7 left-7 z-10 h-8 w-auto"
+                  />
+                  {/* Tekst verticaal in het midden */}
+                  <div className="absolute top-1/2 left-7 z-10 max-w-[58%] -translate-y-1/2">
+                    <p className="font-poppins text-2xl leading-snug font-semibold">
                       {edTitle}
                     </p>
-                    <p className="text-foreground/70 mt-2 text-sm">{edSub}</p>
-                  </div>
-                  <div className="absolute inset-y-0 right-0 w-1/2">
-                    <Image
-                      src={editorialImage}
-                      alt=""
-                      fill
-                      sizes="(min-width: 1024px) 25vw, 50vw"
-                      className="object-cover object-right"
-                    />
-                    {/* Zachte overgang van perzik naar foto */}
-                    <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[#FFE3D3] to-transparent" />
+                    <p className="text-foreground/80 mt-2 text-sm">{edSub}</p>
                   </div>
                 </div>
               </div>
