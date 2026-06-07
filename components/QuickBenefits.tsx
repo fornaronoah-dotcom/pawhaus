@@ -23,7 +23,7 @@ export function QuickBenefits() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
             transition={{ duration: 0.28, delay: i * 0.05, ease: "easeOut" }}
-            className="border-border/60 flex items-center gap-4 rounded-2xl border bg-white px-5 py-4 shadow-[0_6px_20px_rgba(12,42,90,0.05)] transition-transform duration-200 hover:-translate-y-1"
+            className="flex items-center gap-4"
           >
             <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[#FFE3D3] text-[#F05A37]">
               <Icon className="size-6" strokeWidth={1.75} />
