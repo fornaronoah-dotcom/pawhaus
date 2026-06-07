@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { Heart, PackageCheck, RotateCcw, Truck } from "lucide-react";
 import {
@@ -22,9 +23,11 @@ function prettyType(t: string): string {
 export function ProductTabs({
   product,
   sku,
+  editorialImage = "/images/editorial-kat.jpg",
 }: {
   product: Product;
   sku: string | null;
+  editorialImage?: string;
 }) {
   const tabs = [
     product.descriptionHtml ? "Beschrijving" : null,
@@ -34,6 +37,15 @@ export function ProductTabs({
 
   const [active, setActive] = useState(tabs[0]);
   const dier = dierFromTags(product.tags);
+
+  const isFood = /SNACK|KAUW|VOER|VOEDING|BROK/i.test(product.productType || "");
+  const dierLow = dier ? dier.toLowerCase() : "huisdier";
+  const edTitle = isFood
+    ? `Verwen je ${dierLow} met iets lekkers`
+    : `Met liefde gekozen${dier ? ` voor jouw ${dierLow}` : ""}`;
+  const edSub = isFood
+    ? "Ideaal als beloning of tussendoortje."
+    : "Zorgvuldig geselecteerd door Pawhaus.";
 
   const specs: [string, string | null][] = [
     ["Merk", product.vendor || null],
@@ -86,15 +98,25 @@ export function ProductTabs({
                   className="prose-sm text-muted-foreground max-w-none space-y-3 text-sm leading-relaxed [&_h3]:text-foreground [&_h3]:mt-5 [&_h3]:mb-1.5 [&_h3]:text-base [&_h3]:font-semibold [&_li]:my-0.5 [&_strong]:text-foreground [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5"
                   dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
                 />
-                <div className="from-accent/70 to-secondary/50 relative hidden overflow-hidden rounded-3xl bg-gradient-to-br p-8 lg:flex lg:flex-col lg:justify-end">
-                  <Heart className="text-primary size-8" />
-                  <p className="font-poppins mt-4 text-2xl leading-snug font-semibold">
-                    Met liefde gekozen{dier ? ` voor jouw ${dier.toLowerCase()}` : ""}
-                  </p>
-                  <p className="text-muted-foreground mt-2 text-sm">
-                    Zorgvuldig geselecteerd door Pawhaus — premium kwaliteit waar je
-                    huisdier blij van wordt.
-                  </p>
+                <div className="relative min-h-[280px] overflow-hidden rounded-3xl bg-[#FFE3D3]">
+                  <div className="relative z-10 max-w-[62%] p-7">
+                    <Heart className="text-primary size-7" />
+                    <p className="font-poppins mt-3 text-2xl leading-snug font-semibold">
+                      {edTitle}
+                    </p>
+                    <p className="text-foreground/70 mt-2 text-sm">{edSub}</p>
+                  </div>
+                  <div className="absolute inset-y-0 right-0 w-1/2">
+                    <Image
+                      src={editorialImage}
+                      alt=""
+                      fill
+                      sizes="(min-width: 1024px) 25vw, 50vw"
+                      className="object-cover object-center"
+                    />
+                    {/* Zachte overgang van perzik naar foto */}
+                    <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[#FFE3D3] to-transparent" />
+                  </div>
                 </div>
               </div>
             )}

@@ -105,7 +105,15 @@ export default async function ProductPage({
       <QuickBenefits />
 
       {/* Tabs */}
-      <ProductTabs product={product} sku={firstSku} />
+      <ProductTabs
+        product={product}
+        sku={firstSku}
+        editorialImage={
+          dier === "hond"
+            ? "/images/editorial-hond.jpg"
+            : "/images/editorial-kat.jpg"
+        }
+      />
 
       {/* Trust */}
       <TrustBlock />
