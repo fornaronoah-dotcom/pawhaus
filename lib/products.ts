@@ -46,6 +46,10 @@ const CATEGORY_RULES: {
 }[] = [
   { key: "snacks", label: "Snacks", test: /SNACK|KAUW|BEEN/ },
   { key: "voeding", label: "Voeding", test: /DROOGVOER|NATVOER|VOEDING|BROK/ },
+  // Kattenbak(ken) + vulling MOET vóór de generieke /BAK/-regel staan,
+  // anders pakt "Voer- & drinkbakken" per ongeluk "kattenBAK".
+  { key: "kattenbak", label: "Kattenbakken", test: /KATTENBAK/ },
+  { key: "krabpalen", label: "Krabpalen", test: /KRAB/ },
   { key: "bakken", label: "Voer- & drinkbakken", test: /BAK/ },
   { key: "manden", label: "Manden & kussens", test: /BED|MAND|KUSSEN|SLAAP/ },
   { key: "speelgoed", label: "Speelgoed", test: /SPEEL|DUMMY|BAL/ },
