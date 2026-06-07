@@ -77,9 +77,9 @@ export default async function ProductPage({
   const firstSku = product.variants[0]?.sku ?? null;
 
   return (
-    <div className="mx-auto max-w-7xl space-y-20 px-4 pt-36 pb-28 sm:px-6 lg:px-8 lg:pb-12">
+    <div className="mx-auto max-w-7xl px-4 pt-36 pb-28 sm:px-6 lg:px-8 lg:pb-12">
       {/* Kruimelpad */}
-      <nav className="text-muted-foreground -mb-12 flex flex-wrap items-center gap-1 text-sm">
+      <nav className="text-muted-foreground mb-8 flex flex-wrap items-center gap-1 text-sm">
         <Link href="/" className="hover:text-foreground">
           Home
         </Link>
@@ -97,38 +97,40 @@ export default async function ProductPage({
         <span className="text-foreground">{product.title}</span>
       </nav>
 
-      {/* Hero */}
-      <ProductView product={product} images={images} />
+      <div className="space-y-20">
+        {/* Hero */}
+        <ProductView product={product} images={images} />
 
-      {/* Quick benefits */}
-      <QuickBenefits />
+        {/* Quick benefits */}
+        <QuickBenefits />
 
-      {/* Tabs */}
-      <ProductTabs
-        product={product}
-        sku={firstSku}
-        editorialImage={
-          dier === "hond"
-            ? "/images/editorial-hond.jpg"
-            : "/images/editorial-kat.jpg"
-        }
-      />
+        {/* Tabs */}
+        <ProductTabs
+          product={product}
+          sku={firstSku}
+          editorialImage={
+            dier === "hond"
+              ? "/images/editorial-hond.jpg"
+              : "/images/editorial-kat.jpg"
+          }
+        />
 
-      {/* Vaak samen gekocht */}
-      <BoughtTogether products={crossSell} bundleHint />
+        {/* Vaak samen gekocht */}
+        <BoughtTogether products={crossSell} bundleHint />
 
-      {/* Recent bekeken */}
-      <RecentlyViewed
-        current={{
-          handle: product.handle,
-          title: product.title,
-          image: product.featuredImage?.url ?? null,
-          price: formatPrice(product.priceRange.minVariantPrice),
-        }}
-      />
+        {/* Recent bekeken */}
+        <RecentlyViewed
+          current={{
+            handle: product.handle,
+            title: product.title,
+            image: product.featuredImage?.url ?? null,
+            price: formatPrice(product.priceRange.minVariantPrice),
+          }}
+        />
 
-      {/* Nieuwsbrief */}
-      <NewsletterSection />
+        {/* Nieuwsbrief */}
+        <NewsletterSection />
+      </div>
     </div>
   );
 }
