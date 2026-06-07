@@ -112,7 +112,7 @@ export function ProductTabs({
                       alt=""
                       fill
                       sizes="(min-width: 1024px) 25vw, 50vw"
-                      className="object-cover object-center"
+                      className="object-cover object-right"
                     />
                     {/* Zachte overgang van perzik naar foto */}
                     <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[#FFE3D3] to-transparent" />
