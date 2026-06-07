@@ -102,8 +102,8 @@ export default async function ProductPage({
       </nav>
 
       <div className="space-y-20">
-        {/* Hero op een zacht blauw paneel */}
-        <div className="bg-secondary/40 rounded-[32px] p-5 sm:p-8 lg:p-10">
+        {/* Hero op een wit paneel */}
+        <div className="rounded-[32px] bg-white p-5 shadow-[0_10px_40px_rgba(12,42,90,0.05)] sm:p-8 lg:p-10">
           <ProductView product={product} images={images} />
         </div>
 
@@ -121,8 +121,8 @@ export default async function ProductPage({
           }
         />
 
-        {/* Carrousels in een zacht blauw paneel */}
-        <div className="bg-secondary/40 space-y-14 rounded-[32px] px-6 py-12 sm:px-10">
+        {/* Carrousels in een wit paneel */}
+        <div className="space-y-14 rounded-[32px] bg-white px-6 py-12 shadow-[0_10px_40px_rgba(12,42,90,0.05)] sm:px-10">
           {/* Vaak samen gekocht */}
           <BoughtTogether products={crossSell} bundleHint />
 
