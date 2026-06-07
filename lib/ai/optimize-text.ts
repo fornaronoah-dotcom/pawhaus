@@ -23,7 +23,7 @@ const responseSchema = {
     descriptionHtml: {
       type: Type.STRING,
       description:
-        "Herschreven beschrijving als veilige HTML (alleen <p>, <ul>, <li>, <strong>, <br>). 2-4 korte paragrafen of bullets.",
+        "Herschreven beschrijving als veilige HTML, INGEDEELD IN SECTIES met <h3>-kopjes (deze worden uitklapmenu's op de site). Begin met 1 korte intro-paragraaf ZONDER kopje, gevolgd door 2-4 secties met een <h3>-kop, bv. <h3>Kenmerken</h3><ul><li>…</li></ul>, <h3>Gebruik</h3><p>…</p>, <h3>Voor wie</h3><p>…</p>. Alleen <p>, <h3>, <ul>, <li>, <strong>, <br> gebruiken.",
     },
     seoTitle: { type: Type.STRING, description: "SEO-titel, max 60 tekens." },
     metaDescription: {

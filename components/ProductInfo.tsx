@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Check, Truck } from "lucide-react";
 import { AddToCartButton } from "@/components/AddToCartButton";
+import { ProductDescription } from "@/components/ProductDescription";
 import { QuantitySelector } from "@/components/QuantitySelector";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -177,15 +178,9 @@ export function ProductInfo({
         Gratis verzending vanaf € 50 · levering 2–4 werkdagen
       </p>
 
-      {/* Beschrijving */}
+      {/* Beschrijving in uitklapbare secties */}
       {product.descriptionHtml && (
-        <>
-          <Separator />
-          <div
-            className="prose-sm text-muted-foreground max-w-none space-y-3 text-sm leading-relaxed [&_a]:underline [&_strong]:text-foreground"
-            dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
-          />
-        </>
+        <ProductDescription html={product.descriptionHtml} />
       )}
 
       <ul className="text-muted-foreground space-y-1 text-sm">
