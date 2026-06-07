@@ -176,6 +176,7 @@ type RawProduct = {
     selectedOptions: { name: string; value: string }[];
     price: { amount: string; currencyCode: string };
     compareAtPrice: { amount: string; currencyCode: string } | null;
+    image: RawImage | null;
   }>;
 };
 

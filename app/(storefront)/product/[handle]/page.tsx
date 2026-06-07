@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronRight } from "lucide-react";
-import { ProductGallery } from "@/components/ProductGallery";
-import { ProductInfo } from "@/components/ProductInfo";
+import { ProductView } from "@/components/ProductView";
 import { ProductGrid } from "@/components/ProductGrid";
 import { getProduct, getProductHandles, getProducts } from "@/lib/products";
 
@@ -71,10 +70,7 @@ export default async function ProductPage({
         <span className="text-foreground">{product.title}</span>
       </nav>
 
-      <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
-        <ProductGallery images={images} title={product.title} />
-        <ProductInfo product={product} />
-      </div>
+      <ProductView product={product} images={images} />
 
       {related.length > 0 && (
         <section className="mt-24">

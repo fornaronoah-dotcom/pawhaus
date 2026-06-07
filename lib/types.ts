@@ -34,6 +34,7 @@ export type ProductVariant = {
   price: Money;
   compareAtPrice: Money | null;
   selectedOptions: SelectedOption[];
+  image?: ProductImage | null;
 };
 
 export type Product = {

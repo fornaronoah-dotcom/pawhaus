@@ -75,6 +75,9 @@ const PRODUCT_FRAGMENT = /* GraphQL */ `
             amount
             currencyCode
           }
+          image {
+            ...ImageFields
+          }
         }
       }
     }

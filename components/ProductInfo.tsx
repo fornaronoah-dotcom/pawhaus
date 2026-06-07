@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Check, Truck } from "lucide-react";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { QuantitySelector } from "@/components/QuantitySelector";
@@ -23,7 +23,14 @@ function variantMatches(
   );
 }
 
-export function ProductInfo({ product }: { product: Product }) {
+export function ProductInfo({
+  product,
+  onVariantChange,
+}: {
+  product: Product;
+  /** Meldt de gekozen variant aan de ouder (voor de galerij). */
+  onVariantChange?: (variant: ProductVariant | null) => void;
+}) {
   const hasOptions = product.options.some((o) => o.values.length > 0);
 
   const [selected, setSelected] = useState<Record<string, string>>(() => {
@@ -39,6 +46,10 @@ export function ProductInfo({ product }: { product: Product }) {
     () => product.variants.find((v) => variantMatches(v, selected)) ?? null,
     [product.variants, selected],
   );
+
+  useEffect(() => {
+    onVariantChange?.(selectedVariant);
+  }, [selectedVariant, onVariantChange]);
 
   const price = selectedVariant?.price ?? product.priceRange.minVariantPrice;
   const compareAt =
