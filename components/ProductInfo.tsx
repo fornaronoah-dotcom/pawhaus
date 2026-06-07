@@ -128,7 +128,7 @@ export function ProductInfo({
                         "rounded-full border px-5 py-2 text-sm font-medium transition-all duration-200",
                         isActive
                           ? "border-primary bg-primary text-primary-foreground shadow-sm"
-                          : "border-border hover:border-primary/50 hover:-translate-y-0.5",
+                          : "border-border bg-white hover:border-primary/50 hover:-translate-y-0.5",
                         !enabled &&
                           "text-muted-foreground line-through opacity-50 hover:translate-y-0 hover:border-border",
                       )}
@@ -198,7 +198,7 @@ export function ProductInfo({
       </div>
 
       {/* Leveringsbox */}
-      <div className="bg-secondary/60 flex items-center gap-3 rounded-2xl px-4 py-3.5">
+      <div className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3.5 shadow-sm">
         <Truck className="text-sky size-5 shrink-0" />
         <div className="min-w-0 flex-1 text-sm">
           <p className="font-medium">Gratis verzending vanaf € 50</p>

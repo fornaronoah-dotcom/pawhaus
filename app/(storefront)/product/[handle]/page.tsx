@@ -102,8 +102,10 @@ export default async function ProductPage({
       </nav>
 
       <div className="space-y-20">
-        {/* Hero */}
-        <ProductView product={product} images={images} />
+        {/* Hero op een zacht blauw paneel */}
+        <div className="bg-secondary/40 rounded-[32px] p-5 sm:p-8 lg:p-10">
+          <ProductView product={product} images={images} />
+        </div>
 
         {/* Quick benefits */}
         <QuickBenefits />
