@@ -1,20 +1,19 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Check, Truck } from "lucide-react";
+import {
+  ChevronRight,
+  Headphones,
+  Heart,
+  RotateCcw,
+  ShieldCheck,
+  Truck,
+} from "lucide-react";
+import { toast } from "sonner";
 import { AddToCartButton } from "@/components/AddToCartButton";
-import { ProductDescription } from "@/components/ProductDescription";
-import { ProductHighlights } from "@/components/ProductHighlights";
-import { ProductSpecs } from "@/components/ProductSpecs";
 import { QuantitySelector } from "@/components/QuantitySelector";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import {
-  cn,
-  discountPercent,
-  formatPrice,
-  isOnSale,
-} from "@/lib/utils";
+import { cn, discountPercent, formatPrice, isOnSale } from "@/lib/utils";
 import type { Product, ProductVariant } from "@/lib/types";
 
 function variantMatches(
@@ -31,7 +30,7 @@ export function ProductInfo({
   onVariantChange,
 }: {
   product: Product;
-  /** Meldt de gekozen variant aan de ouder (voor de galerij). */
+  /** Meldt de gekozen variant aan de ouder (voor de galerij + sticky bar). */
   onVariantChange?: (variant: ProductVariant | null) => void;
 }) {
   const hasOptions = product.options.some((o) => o.values.length > 0);
@@ -44,6 +43,7 @@ export function ProductInfo({
     );
   });
   const [quantity, setQuantity] = useState(1);
+  const [fav, setFav] = useState(false);
 
   const selectedVariant = useMemo(
     () => product.variants.find((v) => variantMatches(v, selected)) ?? null,
@@ -55,8 +55,7 @@ export function ProductInfo({
   }, [selectedVariant, onVariantChange]);
 
   const price = selectedVariant?.price ?? product.priceRange.minVariantPrice;
-  const compareAt =
-    selectedVariant?.compareAtPrice ?? product.compareAtPrice;
+  const compareAt = selectedVariant?.compareAtPrice ?? product.compareAtPrice;
   const onSale = isOnSale(price, compareAt);
   const available = selectedVariant
     ? selectedVariant.availableForSale
@@ -72,41 +71,40 @@ export function ProductInfo({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="space-y-2">
+      <div className="space-y-3">
         {product.productType && (
-          <p className="text-muted-foreground text-sm tracking-wide uppercase">
+          <p className="text-primary text-xs font-semibold tracking-[0.18em] uppercase">
             {product.productType}
           </p>
         )}
-        <h1 className="text-4xl font-semibold tracking-tight">
+        <h1 className="font-poppins text-3xl leading-tight font-semibold tracking-tight sm:text-4xl">
           {product.title}
         </h1>
-        <div className="flex items-center gap-3">
-          <span className="text-2xl font-medium">{formatPrice(price)}</span>
+        <div className="flex items-end gap-3">
+          <span className="text-primary text-3xl font-semibold">
+            {formatPrice(price)}
+          </span>
           {onSale && compareAt && (
             <>
-              <span className="text-muted-foreground text-lg line-through">
+              <span className="text-muted-foreground mb-1 text-lg line-through">
                 {formatPrice(compareAt)}
               </span>
-              <Badge className="bg-brand text-brand-foreground border-transparent">
+              <Badge className="bg-brand text-brand-foreground mb-1 border-transparent">
                 −{discountPercent(price, compareAt)}%
               </Badge>
             </>
           )}
         </div>
+        <p className="text-muted-foreground text-xs">Inclusief btw</p>
       </div>
 
-      <ProductHighlights descriptionHtml={product.descriptionHtml} />
-
-      <Separator />
-
-      {/* Opties */}
+      {/* Variant-pills */}
       {hasOptions && (
-        <div className="space-y-5">
+        <div className="space-y-4">
           {product.options.map((option) => (
             <div key={option.id} className="space-y-2">
               <div className="flex items-center gap-2 text-sm">
-                <span className="font-medium">{option.name}</span>
+                <span className="font-medium">{option.name}:</span>
                 <span className="text-muted-foreground">
                   {selected[option.name]}
                 </span>
@@ -127,12 +125,12 @@ export function ProductInfo({
                         }))
                       }
                       className={cn(
-                        "rounded-lg border px-4 py-2 text-sm transition-colors",
+                        "rounded-full border px-5 py-2 text-sm font-medium transition-all duration-200",
                         isActive
-                          ? "border-foreground bg-foreground text-background"
-                          : "border-border hover:border-foreground/40",
+                          ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                          : "border-border hover:border-primary/50 hover:-translate-y-0.5",
                         !enabled &&
-                          "text-muted-foreground line-through opacity-50 hover:border-border",
+                          "text-muted-foreground line-through opacity-50 hover:translate-y-0 hover:border-border",
                       )}
                     >
                       {value}
@@ -148,60 +146,81 @@ export function ProductInfo({
       {/* Voorraadstatus */}
       <p
         className={cn(
-          "flex items-center gap-2 text-sm",
-          available ? "text-foreground" : "text-muted-foreground",
+          "flex items-center gap-2 text-sm font-medium",
+          available ? "text-teal" : "text-muted-foreground",
         )}
       >
         <span
           className={cn(
-            "size-2 rounded-full",
-            available ? "bg-teal" : "bg-muted-foreground",
+            "size-2.5 rounded-full",
+            available ? "bg-teal animate-pulse" : "bg-muted-foreground",
           )}
         />
         {available ? "Op voorraad" : "Tijdelijk uitverkocht"}
       </p>
 
-      {/* Aantal + toevoegen */}
+      {/* Aantal + toevoegen + favoriet */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <QuantitySelector
           value={quantity}
           onChange={setQuantity}
           disabled={!available}
-          className="h-12"
+          className="h-12 rounded-full"
         />
         <AddToCartButton
           variantId={selectedVariant?.id ?? null}
           availableForSale={available}
           quantity={quantity}
-          className="sm:flex-1"
+          className="rounded-full sm:flex-1"
         />
+        <button
+          type="button"
+          aria-pressed={fav}
+          aria-label={fav ? "Verwijder uit favorieten" : "Voeg toe aan favorieten"}
+          onClick={() => {
+            const next = !fav;
+            setFav(next);
+            toast.success(
+              next
+                ? `${product.title} toegevoegd aan favorieten`
+                : "Verwijderd uit favorieten",
+            );
+          }}
+          className="border-border hover:border-primary/50 grid size-12 shrink-0 place-items-center rounded-full border transition hover:-translate-y-0.5"
+        >
+          <Heart
+            className={cn(
+              "size-5 transition-colors",
+              fav ? "fill-primary text-primary" : "text-foreground/70",
+            )}
+          />
+        </button>
       </div>
 
-      <p className="text-muted-foreground flex items-center gap-2 text-sm">
-        <Truck className="size-4" />
-        Gratis verzending vanaf € 50 · levering 2–4 werkdagen
-      </p>
-
-      {/* Beschrijving in uitklapbare secties + specificaties */}
-      {product.descriptionHtml ? (
-        <div>
-          <ProductDescription html={product.descriptionHtml} />
-          <ProductSpecs product={product} sku={selectedVariant?.sku ?? null} />
+      {/* Leveringsbox */}
+      <div className="bg-accent/50 flex items-center gap-3 rounded-2xl px-4 py-3.5">
+        <Truck className="text-primary size-5 shrink-0" />
+        <div className="min-w-0 flex-1 text-sm">
+          <p className="font-medium">Gratis verzending vanaf € 50</p>
+          <p className="text-muted-foreground">
+            Voor 15:00 besteld, vandaag verzonden
+          </p>
         </div>
-      ) : (
-        <div className="border-t">
-          <ProductSpecs product={product} sku={selectedVariant?.sku ?? null} />
-        </div>
-      )}
+        <ChevronRight className="text-muted-foreground size-4 shrink-0" />
+      </div>
 
-      <ul className="text-muted-foreground space-y-1 text-sm">
-        <li className="flex items-center gap-2">
-          <Check className="size-4" /> Veilig betalen via Shopify
-        </li>
-        <li className="flex items-center gap-2">
-          <Check className="size-4" /> 30 dagen retourrecht
-        </li>
-      </ul>
+      {/* Trust-rij */}
+      <div className="text-muted-foreground flex flex-wrap items-center gap-x-6 gap-y-2 border-t pt-4 text-xs">
+        <span className="flex items-center gap-1.5">
+          <ShieldCheck className="size-4" /> Veilig betalen
+        </span>
+        <span className="flex items-center gap-1.5">
+          <RotateCcw className="size-4" /> 30 dagen retour
+        </span>
+        <span className="flex items-center gap-1.5">
+          <Headphones className="size-4" /> Klantenservice
+        </span>
+      </div>
     </div>
   );
 }

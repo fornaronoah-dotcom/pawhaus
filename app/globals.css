@@ -179,6 +179,13 @@
   }
 }
 
+@layer utilities {
+  /* Premium display-font, gescoped voor de productpagina. */
+  .font-poppins {
+    font-family: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  }
+}
+
 /* Zachte zweef-animatie voor de kortingsbadge in de hero */
 @keyframes float {
   0%,

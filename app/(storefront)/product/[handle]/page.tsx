@@ -3,8 +3,19 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { ProductView } from "@/components/ProductView";
-import { ProductGrid } from "@/components/ProductGrid";
-import { getProduct, getProductHandles, getProducts } from "@/lib/products";
+import { QuickBenefits } from "@/components/QuickBenefits";
+import { ProductTabs } from "@/components/ProductTabs";
+import { TrustBlock } from "@/components/TrustBlock";
+import { BoughtTogether } from "@/components/BoughtTogether";
+import { RecentlyViewed } from "@/components/RecentlyViewed";
+import { NewsletterSection } from "@/components/NewsletterSection";
+import {
+  getProduct,
+  getProductHandles,
+  getProducts,
+  productCategory,
+} from "@/lib/products";
+import { formatPrice } from "@/lib/utils";
 
 type Params = { handle: string };
 
@@ -43,21 +54,15 @@ export default async function ProductPage({
 
   if (!product) notFound();
 
-  const category = product.tags[0];
-  const related = (await getProducts({ category, first: 5 }))
-    .filter((p) => p.handle !== product.handle)
-    .slice(0, 4);
-
-  // Cross-sell "Vaak samen gekocht": producten voor hetzelfde dier (hond/kat).
+  // Cross-sell "Vaak samen gekocht": zelfde dier, anders zelfde merk/tag.
   const dier = product.tags
     .map((t) => t.toLowerCase())
     .find((t) => t === "hond" || t === "kat");
-  const exclude = new Set([product.handle, ...related.map((r) => r.handle)]);
-  const crossSell = dier
-    ? (await getProducts({ category: dier, first: 10 }))
-        .filter((p) => !exclude.has(p.handle))
-        .slice(0, 4)
-    : [];
+  const crossSell = (
+    await getProducts({ category: dier ?? product.tags[0], first: 14 })
+  )
+    .filter((p) => p.handle !== product.handle)
+    .slice(0, 10);
 
   const images =
     product.images.length > 0
@@ -66,40 +71,60 @@ export default async function ProductPage({
         ? [product.featuredImage]
         : [];
 
+  const subcat = product.productType
+    ? productCategory(product.productType).label
+    : null;
+  const dierLabel = dier === "hond" ? "Honden" : dier === "kat" ? "Katten" : null;
+  const firstSku = product.variants[0]?.sku ?? null;
+
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 pb-28 sm:px-6 lg:px-8 lg:pb-8">
+    <div className="mx-auto max-w-7xl space-y-20 px-4 py-8 pb-28 sm:px-6 lg:px-8 lg:pb-12">
       {/* Kruimelpad */}
-      <nav className="text-muted-foreground mb-6 flex items-center gap-1 text-sm">
+      <nav className="text-muted-foreground -mb-12 flex flex-wrap items-center gap-1 text-sm">
         <Link href="/" className="hover:text-foreground">
           Home
         </Link>
         <ChevronRight className="size-3.5" />
         <Link href="/producten" className="hover:text-foreground">
-          Producten
+          {dierLabel ?? "Producten"}
         </Link>
+        {subcat && (
+          <>
+            <ChevronRight className="size-3.5" />
+            <span>{subcat}</span>
+          </>
+        )}
         <ChevronRight className="size-3.5" />
         <span className="text-foreground">{product.title}</span>
       </nav>
 
+      {/* Hero */}
       <ProductView product={product} images={images} />
 
-      {crossSell.length > 0 && (
-        <section className="mt-20">
-          <h2 className="mb-8 text-4xl font-bold tracking-tight">
-            Vaak samen gekocht
-          </h2>
-          <ProductGrid products={crossSell} />
-        </section>
-      )}
+      {/* Quick benefits */}
+      <QuickBenefits descriptionHtml={product.descriptionHtml} />
 
-      {related.length > 0 && (
-        <section className="mt-20">
-          <h2 className="mb-8 text-4xl font-bold tracking-tight">
-            Misschien ook interessant
-          </h2>
-          <ProductGrid products={related} />
-        </section>
-      )}
+      {/* Tabs */}
+      <ProductTabs product={product} sku={firstSku} />
+
+      {/* Trust */}
+      <TrustBlock />
+
+      {/* Vaak samen gekocht */}
+      <BoughtTogether products={crossSell} bundleHint />
+
+      {/* Recent bekeken */}
+      <RecentlyViewed
+        current={{
+          handle: product.handle,
+          title: product.title,
+          image: product.featuredImage?.url ?? null,
+          price: formatPrice(product.priceRange.minVariantPrice),
+        }}
+      />
+
+      {/* Nieuwsbrief */}
+      <NewsletterSection />
     </div>
   );
 }

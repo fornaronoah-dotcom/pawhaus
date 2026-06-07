@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { AnimatePresence, motion } from "framer-motion";
+import { ZoomIn } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ProductImage } from "@/lib/types";
 
@@ -21,6 +23,7 @@ export function ProductGallery({
   activeUrl?: string | null;
 }) {
   const [active, setActive] = useState(0);
+  const [zoom, setZoom] = useState(false);
 
   // Hoofdfoto laten meeswitchen met de gekozen variant.
   useEffect(() => {
@@ -33,23 +36,10 @@ export function ProductGallery({
   const current = images[active] ?? images[0];
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="bg-muted relative aspect-square overflow-hidden rounded-2xl">
-        {current && (
-          <Image
-            src={current.url}
-            alt={current.altText ?? title}
-            fill
-            priority
-            sizes="(min-width: 1024px) 50vw, 100vw"
-            className="object-cover"
-            unoptimized={current.url.endsWith(".svg")}
-          />
-        )}
-      </div>
-
+    <div className="flex flex-col-reverse gap-4 lg:flex-row">
+      {/* Thumbnails: horizontaal op mobiel, verticaal op desktop */}
       {images.length > 1 && (
-        <div className="grid grid-cols-5 gap-3">
+        <div className="flex gap-3 lg:flex-col">
           {images.map((image, index) => (
             <button
               key={`${image.url}-${index}`}
@@ -57,17 +47,17 @@ export function ProductGallery({
               onClick={() => setActive(index)}
               aria-label={`Afbeelding ${index + 1} tonen`}
               className={cn(
-                "bg-muted relative aspect-square overflow-hidden rounded-lg ring-1 transition",
+                "bg-secondary/40 relative aspect-square size-16 shrink-0 overflow-hidden rounded-2xl ring-1 transition-all duration-200 lg:size-20",
                 index === active
-                  ? "ring-foreground"
-                  : "ring-transparent hover:ring-border",
+                  ? "ring-primary ring-2"
+                  : "ring-black/5 hover:ring-foreground/20",
               )}
             >
               <Image
                 src={image.url}
                 alt={image.altText ?? `${title} ${index + 1}`}
                 fill
-                sizes="20vw"
+                sizes="80px"
                 className="object-cover"
                 unoptimized={image.url.endsWith(".svg")}
               />
@@ -75,6 +65,42 @@ export function ProductGallery({
           ))}
         </div>
       )}
+
+      {/* Hoofdfoto */}
+      <div
+        className="group bg-secondary/30 relative aspect-square flex-1 cursor-zoom-in overflow-hidden rounded-[32px]"
+        onClick={() => setZoom((z) => !z)}
+      >
+        <AnimatePresence mode="wait">
+          {current && (
+            <motion.div
+              key={current.url}
+              initial={{ opacity: 0, scale: 1.02 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.99 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="absolute inset-0"
+            >
+              <Image
+                src={current.url}
+                alt={current.altText ?? title}
+                fill
+                priority
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                className={cn(
+                  "object-contain p-6 transition-transform duration-500 ease-out",
+                  zoom ? "scale-150" : "group-hover:scale-105",
+                )}
+                unoptimized={current.url.endsWith(".svg")}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <span className="text-foreground/70 absolute right-4 bottom-4 grid size-9 place-items-center rounded-full bg-white/90 shadow-sm backdrop-blur transition group-hover:scale-105">
+          <ZoomIn className="size-4" />
+        </span>
+      </div>
     </div>
   );
 }
