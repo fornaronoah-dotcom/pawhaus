@@ -198,8 +198,8 @@ export function ProductInfo({
       </div>
 
       {/* Leveringsbox */}
-      <div className="bg-accent/50 flex items-center gap-3 rounded-2xl px-4 py-3.5">
-        <Truck className="text-primary size-5 shrink-0" />
+      <div className="bg-secondary/60 flex items-center gap-3 rounded-2xl px-4 py-3.5">
+        <Truck className="text-sky size-5 shrink-0" />
         <div className="min-w-0 flex-1 text-sm">
           <p className="font-medium">Gratis verzending vanaf € 50</p>
           <p className="text-muted-foreground">

@@ -119,18 +119,21 @@ export default async function ProductPage({
           }
         />
 
-        {/* Vaak samen gekocht */}
-        <BoughtTogether products={crossSell} bundleHint />
+        {/* Carrousels in een zacht blauw paneel */}
+        <div className="bg-secondary/40 space-y-14 rounded-[32px] px-6 py-12 sm:px-10">
+          {/* Vaak samen gekocht */}
+          <BoughtTogether products={crossSell} bundleHint />
 
-        {/* Recent bekeken */}
-        <RecentlyViewed
-          current={{
-            handle: product.handle,
-            title: product.title,
-            image: product.featuredImage?.url ?? null,
-            price: formatPrice(product.priceRange.minVariantPrice),
-          }}
-        />
+          {/* Recent bekeken */}
+          <RecentlyViewed
+            current={{
+              handle: product.handle,
+              title: product.title,
+              image: product.featuredImage?.url ?? null,
+              price: formatPrice(product.priceRange.minVariantPrice),
+            }}
+          />
+        </div>
 
         {/* Nieuwsbrief */}
         <NewsletterSection />
