@@ -102,7 +102,7 @@ export default async function ProductPage({
       <ProductView product={product} images={images} />
 
       {/* Quick benefits */}
-      <QuickBenefits descriptionHtml={product.descriptionHtml} />
+      <QuickBenefits />
 
       {/* Tabs */}
       <ProductTabs product={product} sku={firstSku} />
