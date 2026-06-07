@@ -4,9 +4,37 @@
  * zonder flag zijn altijd actief (al gebouwd).
  */
 
+import {
+  LayoutDashboard,
+  Package,
+  Sparkles,
+  Boxes,
+  Tag,
+  Users,
+  Mail,
+  Gift,
+  FileText,
+  BarChart3,
+  Settings,
+  type LucideIcon,
+} from "lucide-react";
+
+/** Sectiegroepen waarin nav-items in de sidebar worden gebundeld. */
+export type NavGroup = "Overzicht" | "Catalogus" | "Groei" | "Systeem";
+
+/** Volgorde waarin de groepen in de sidebar verschijnen. */
+export const NAV_GROUPS: NavGroup[] = [
+  "Overzicht",
+  "Catalogus",
+  "Groei",
+  "Systeem",
+];
+
 export type NavItem = {
   href: string;
   label: string;
+  icon: LucideIcon;
+  group: NavGroup;
   /** Feature-flag key; ontbreekt = altijd actief. */
   flag?: FeatureKey;
 };
@@ -21,17 +49,17 @@ export type FeatureKey =
   | "analytics";
 
 export const NAV: NavItem[] = [
-  { href: "/admin", label: "Dashboard" },
-  { href: "/admin/products", label: "Producten" },
-  { href: "/admin/ai-review", label: "AI-review" },
-  { href: "/admin/bundels", label: "Bundels", flag: "bundels" },
-  { href: "/admin/kortingen", label: "Kortingen", flag: "kortingen" },
-  { href: "/admin/klanten", label: "Klanten", flag: "klanten" },
-  { href: "/admin/marketing", label: "Marketing", flag: "marketing" },
-  { href: "/admin/giveaways", label: "Giveaways", flag: "giveaways" },
-  { href: "/admin/content", label: "Content", flag: "content" },
-  { href: "/admin/analytics", label: "Analytics", flag: "analytics" },
-  { href: "/admin/instellingen", label: "Instellingen" },
+  { href: "/admin", label: "Dashboard", icon: LayoutDashboard, group: "Overzicht" },
+  { href: "/admin/analytics", label: "Analytics", icon: BarChart3, group: "Overzicht", flag: "analytics" },
+  { href: "/admin/products", label: "Producten", icon: Package, group: "Catalogus" },
+  { href: "/admin/ai-review", label: "AI-review", icon: Sparkles, group: "Catalogus" },
+  { href: "/admin/bundels", label: "Bundels", icon: Boxes, group: "Catalogus", flag: "bundels" },
+  { href: "/admin/kortingen", label: "Kortingen", icon: Tag, group: "Groei", flag: "kortingen" },
+  { href: "/admin/klanten", label: "Klanten", icon: Users, group: "Groei", flag: "klanten" },
+  { href: "/admin/marketing", label: "Marketing", icon: Mail, group: "Groei", flag: "marketing" },
+  { href: "/admin/giveaways", label: "Giveaways", icon: Gift, group: "Groei", flag: "giveaways" },
+  { href: "/admin/content", label: "Content", icon: FileText, group: "Groei", flag: "content" },
+  { href: "/admin/instellingen", label: "Instellingen", icon: Settings, group: "Systeem" },
 ];
 
 /** Module-metadata voor placeholderpagina's + instellingen. */
