@@ -48,6 +48,17 @@ export default async function ProductPage({
     .filter((p) => p.handle !== product.handle)
     .slice(0, 4);
 
+  // Cross-sell "Vaak samen gekocht": producten voor hetzelfde dier (hond/kat).
+  const dier = product.tags
+    .map((t) => t.toLowerCase())
+    .find((t) => t === "hond" || t === "kat");
+  const exclude = new Set([product.handle, ...related.map((r) => r.handle)]);
+  const crossSell = dier
+    ? (await getProducts({ category: dier, first: 10 }))
+        .filter((p) => !exclude.has(p.handle))
+        .slice(0, 4)
+    : [];
+
   const images =
     product.images.length > 0
       ? product.images
@@ -56,7 +67,7 @@ export default async function ProductPage({
         : [];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl px-4 py-8 pb-28 sm:px-6 lg:px-8 lg:pb-8">
       {/* Kruimelpad */}
       <nav className="text-muted-foreground mb-6 flex items-center gap-1 text-sm">
         <Link href="/" className="hover:text-foreground">
@@ -72,8 +83,17 @@ export default async function ProductPage({
 
       <ProductView product={product} images={images} />
 
+      {crossSell.length > 0 && (
+        <section className="mt-20">
+          <h2 className="mb-8 text-4xl font-bold tracking-tight">
+            Vaak samen gekocht
+          </h2>
+          <ProductGrid products={crossSell} />
+        </section>
+      )}
+
       {related.length > 0 && (
-        <section className="mt-24">
+        <section className="mt-20">
           <h2 className="mb-8 text-4xl font-bold tracking-tight">
             Misschien ook interessant
           </h2>

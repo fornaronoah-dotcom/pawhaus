@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Check, Truck } from "lucide-react";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { ProductDescription } from "@/components/ProductDescription";
+import { ProductHighlights } from "@/components/ProductHighlights";
+import { ProductSpecs } from "@/components/ProductSpecs";
 import { QuantitySelector } from "@/components/QuantitySelector";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -94,6 +96,8 @@ export function ProductInfo({
         </div>
       </div>
 
+      <ProductHighlights descriptionHtml={product.descriptionHtml} />
+
       <Separator />
 
       {/* Opties */}
@@ -178,9 +182,16 @@ export function ProductInfo({
         Gratis verzending vanaf € 50 · levering 2–4 werkdagen
       </p>
 
-      {/* Beschrijving in uitklapbare secties */}
-      {product.descriptionHtml && (
-        <ProductDescription html={product.descriptionHtml} />
+      {/* Beschrijving in uitklapbare secties + specificaties */}
+      {product.descriptionHtml ? (
+        <div>
+          <ProductDescription html={product.descriptionHtml} />
+          <ProductSpecs product={product} sku={selectedVariant?.sku ?? null} />
+        </div>
+      ) : (
+        <div className="border-t">
+          <ProductSpecs product={product} sku={selectedVariant?.sku ?? null} />
+        </div>
       )}
 
       <ul className="text-muted-foreground space-y-1 text-sm">

@@ -172,6 +172,7 @@ type RawProduct = {
   variants: Edges<{
     id: string;
     title: string;
+    sku: string | null;
     availableForSale: boolean;
     selectedOptions: { name: string; value: string }[];
     price: { amount: string; currencyCode: string };
