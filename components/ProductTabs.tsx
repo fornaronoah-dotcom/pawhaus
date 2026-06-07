@@ -41,7 +41,7 @@ export function ProductTabs({
   const isFood = /SNACK|KAUW|VOER|VOEDING|BROK/i.test(product.productType || "");
   const dierLow = dier ? dier.toLowerCase() : "huisdier";
   const edTitle = isFood
-    ? `Verwen je ${dierLow} met iets lekkers`
+    ? `Verwen je ${dierLow} met\niets lekkers`
     : `Met liefde gekozen${dier ? ` voor jouw ${dierLow}` : ""}`;
   const edSub = isFood
     ? "Ideaal als beloning of tussendoortje."
@@ -177,7 +177,7 @@ export function ProductTabs({
         />
         {/* Tekst verticaal in het midden */}
         <div className="absolute top-1/2 left-7 z-10 max-w-[58%] -translate-y-1/2">
-          <p className="font-poppins text-2xl leading-snug font-semibold">
+          <p className="font-poppins text-2xl leading-snug font-semibold whitespace-pre-line">
             {edTitle}
           </p>
           <p className="text-foreground/80 mt-2 text-sm">{edSub}</p>
