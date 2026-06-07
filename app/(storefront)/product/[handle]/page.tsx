@@ -70,10 +70,12 @@ export default async function ProductPage({
         ? [product.featuredImage]
         : [];
 
-  const subcat = product.productType
-    ? productCategory(product.productType).label
-    : null;
+  const cat = product.productType ? productCategory(product.productType) : null;
   const dierLabel = dier === "hond" ? "Honden" : dier === "kat" ? "Katten" : null;
+  const dierHref = dier ? `/producten?category=${dier}` : "/producten";
+  const catHref = cat
+    ? `/producten?${dier ? `category=${dier}&` : ""}type=${cat.key}`
+    : null;
   const firstSku = product.variants[0]?.sku ?? null;
 
   return (
@@ -84,13 +86,15 @@ export default async function ProductPage({
           Home
         </Link>
         <ChevronRight className="size-3.5" />
-        <Link href="/producten" className="hover:text-foreground">
+        <Link href={dierHref} className="hover:text-foreground">
           {dierLabel ?? "Producten"}
         </Link>
-        {subcat && (
+        {cat && catHref && (
           <>
             <ChevronRight className="size-3.5" />
-            <span>{subcat}</span>
+            <Link href={catHref} className="hover:text-foreground">
+              {cat.label}
+            </Link>
           </>
         )}
         <ChevronRight className="size-3.5" />
