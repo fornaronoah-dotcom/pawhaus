@@ -19,8 +19,15 @@ import { formatPrice } from "@/lib/utils";
 type Params = { handle: string };
 
 export async function generateStaticParams() {
-  const handles = await getProductHandles();
-  return handles.map((handle) => ({ handle }));
+  // Shopify onbereikbaar op build-tijd → niets pre-renderen; pagina's worden
+  // dan on-demand gerenderd i.p.v. dat de hele build faalt.
+  try {
+    const handles = await getProductHandles();
+    return handles.map((handle) => ({ handle }));
+  } catch (err) {
+    console.warn("generateStaticParams: Shopify niet bereikbaar, skip pre-render.", err);
+    return [];
+  }
 }
 
 export async function generateMetadata({
