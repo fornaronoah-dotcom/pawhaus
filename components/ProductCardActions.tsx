@@ -1,20 +1,21 @@
 "use client";
 
-import { useState } from "react";
-import { Heart, Loader2, ShoppingBag } from "lucide-react";
-import { toast } from "sonner";
+import { Heart, Loader2, ShoppingCart } from "lucide-react";
 import { useCart } from "@/components/cart/cart-context";
+import { useFavorites } from "@/components/favorites/favorites-context";
 import { cn } from "@/lib/utils";
 
 /** Favoriet-toggle (hartje). Zit in een Link, dus navigatie wordt geblokkeerd. */
 export function FavoriteButton({
-  title,
+  handle,
   className,
 }: {
-  title: string;
+  /** Product-handle — sleutel voor de favorietenlijst. */
+  handle: string;
   className?: string;
 }) {
-  const [fav, setFav] = useState(false);
+  const { isFavorite, toggle } = useFavorites();
+  const fav = isFavorite(handle);
 
   return (
     <button
@@ -24,11 +25,7 @@ export function FavoriteButton({
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        const next = !fav;
-        setFav(next);
-        toast.success(
-          next ? `${title} toegevoegd aan favorieten` : "Verwijderd uit favorieten",
-        );
+        toggle(handle);
       }}
       className={cn(
         "grid size-9 place-items-center rounded-full bg-white/90 shadow-sm backdrop-blur transition hover:scale-105 hover:bg-white active:scale-95",
@@ -81,7 +78,7 @@ export function QuickAddButton({
         {isPending ? (
           <Loader2 className="size-4 animate-spin" />
         ) : (
-          <ShoppingBag className="size-4" />
+          <ShoppingCart className="size-4" />
         )}
       </button>
     );
@@ -100,7 +97,7 @@ export function QuickAddButton({
       {isPending ? (
         <Loader2 className="size-4 animate-spin" />
       ) : (
-        <ShoppingBag className="size-4" />
+        <ShoppingCart className="size-4" />
       )}
       {availableForSale ? "Toevoegen" : "Uitverkocht"}
     </button>

@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { ZoomableImage } from "@/components/admin/ZoomableImage";
 import { setMainImageAction } from "@/lib/admin-actions";
 import type { AdminMedia } from "@/lib/admin-products";
 
@@ -43,12 +43,12 @@ export function MediaGallery({
       {media.map((m, i) => (
         <div key={m.id} className="flex w-24 flex-col gap-1">
           <div className="relative">
-            <Image
+            <ZoomableImage
               src={m.url}
               alt={m.altText ?? ""}
               width={96}
               height={96}
-              className="h-24 w-24 rounded-lg object-cover ring-1 ring-foreground/10"
+              className="ring-foreground/10 hover:ring-primary/40 h-24 w-24 rounded-lg object-cover ring-1 transition"
             />
             {i === 0 ? (
               <span className="absolute left-1 top-1 rounded bg-primary px-1 text-[10px] font-medium text-primary-foreground">

@@ -9,7 +9,15 @@ const GUARANTEES = [
 
 const ANIMALS: Record<
   string,
-  { img: string; w: number; h: number; title: string; sub: string }
+  {
+    img: string;
+    w: number;
+    h: number;
+    title: string;
+    sub: string;
+    /** Optioneel afwijkend formaat — brede foto's tonen we wat kleiner. */
+    imgClass?: string;
+  }
 > = {
   hond: {
     img: "/images/producten-hond-2.png",
@@ -17,13 +25,15 @@ const ANIMALS: Record<
     h: 1350,
     title: "Voor de hond",
     sub: "Alles voor een blije, gezonde en actieve hond.",
+    imgClass: "h-36 sm:h-44 lg:h-52 lg:translate-y-5",
   },
   kat: {
-    img: "/images/producten-kat-2.png",
-    w: 2303,
-    h: 1380,
+    img: "/images/producten-kat-4.png",
+    w: 2181,
+    h: 1091,
     title: "Voor de kat",
     sub: "Alles voor een tevreden, speelse en verzorgde kat.",
+    imgClass: "-ml-3 h-28 sm:-ml-6 sm:h-36 lg:-ml-10 lg:h-44 lg:translate-y-5",
   },
 };
 
@@ -58,7 +68,7 @@ export function CategoryHero({
                 width={animal.w}
                 height={animal.h}
                 priority
-                className="h-36 w-auto shrink-0 translate-y-3 self-end sm:h-44 lg:h-52 lg:translate-y-5"
+                className={`w-auto shrink-0 translate-y-3 self-end ${animal.imgClass ?? "h-36 sm:h-44 lg:h-52 lg:translate-y-5"}`}
               />
             )}
             <div>
@@ -82,7 +92,7 @@ export function CategoryHero({
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-x-6 gap-y-3">
+          <div className="flex flex-wrap gap-x-6 gap-y-3 lg:flex-nowrap">
             {GUARANTEES.map(({ Icon, title, sub }) => (
               <div key={title} className="flex items-center gap-2.5">
                 <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#f3e7c9] text-[#0C2A5A]">

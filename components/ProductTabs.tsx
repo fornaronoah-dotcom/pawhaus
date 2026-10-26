@@ -8,6 +8,7 @@ import {
   dierFromTags,
   parseAfmetingen,
   parseInhoud,
+  splitDescriptionSections,
 } from "@/lib/product-meta";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/lib/types";
@@ -29,11 +30,33 @@ export function ProductTabs({
   sku: string | null;
   editorialImage?: string;
 }) {
+  const sections = splitDescriptionSections(product.descriptionHtml);
+
+  // Max 4 tabs: Beschrijving, Kenmerken (indien aanwezig), Specificaties, Levering.
+  // Alle overige verhalende <h3>-secties worden in de Beschrijving-tab gevouwen
+  // (met hun kopje als subtitel) i.p.v. elk een eigen tab te krijgen. De
+  // afmetingen-sectie vervalt — die staat al in de Specificaties-tab.
+  const kenmerken = sections.find((s) => /kenmerken/i.test(s.title));
+  const narrative = sections.filter(
+    (s) => s !== kenmerken && !/afmetingen/i.test(s.title),
+  );
+  const beschrijvingHtml = narrative
+    .map((s) =>
+      s.title === "Beschrijving" ? s.html : `<h3>${s.title}</h3>${s.html}`,
+    )
+    .join("");
+
+  const contentMap = new Map<string, string>([
+    ["Beschrijving", beschrijvingHtml],
+  ]);
+  if (kenmerken) contentMap.set("Kenmerken", kenmerken.html);
+
   const tabs = [
-    product.descriptionHtml ? "Beschrijving" : null,
+    "Beschrijving",
+    ...(kenmerken ? ["Kenmerken"] : []),
     "Specificaties",
     "Levering",
-  ].filter(Boolean) as string[];
+  ];
 
   const [active, setActive] = useState(tabs[0]);
   const dier = dierFromTags(product.tags);
@@ -61,15 +84,15 @@ export function ProductTabs({
     <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:gap-12">
       {/* Links: tabs + wisselende inhoud */}
       <div>
-        {/* Tab-balk */}
-        <div className="flex flex-wrap gap-x-8 gap-y-2 border-b">
+        {/* Tab-balk — één lijn, scrollt horizontaal als het niet past */}
+        <div className="flex gap-x-6 overflow-x-auto border-b [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {tabs.map((t) => (
             <button
               key={t}
               type="button"
               onClick={() => setActive(t)}
               className={cn(
-                "relative pb-3 text-sm font-medium transition-colors",
+                "relative shrink-0 pb-3 text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:text-foreground",
                 active === t ? "text-foreground" : "text-muted-foreground hover:text-foreground",
               )}
             >
@@ -94,10 +117,10 @@ export function ProductTabs({
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
             >
-              {active === "Beschrijving" && (
+              {contentMap.has(active) && (
                 <div
                   className="prose-sm text-muted-foreground max-w-none space-y-3 text-sm leading-relaxed [&_h3]:text-foreground [&_h3]:mt-5 [&_h3]:mb-1.5 [&_h3]:text-base [&_h3]:font-semibold [&_li]:my-0.5 [&_strong]:text-foreground [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5"
-                  dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
+                  dangerouslySetInnerHTML={{ __html: contentMap.get(active)! }}
                 />
               )}
 
@@ -156,8 +179,8 @@ export function ProductTabs({
         </div>
       </div>
 
-      {/* Rechts: editorial-kaart — altijd zichtbaar, ongeacht de tab */}
-      <div className="relative min-h-[320px] overflow-hidden rounded-3xl bg-[#FFE3D3] lg:h-full">
+      {/* Rechts: editorial-kaart — altijd zichtbaar, compact en meelopend */}
+      <div className="relative h-64 self-start overflow-hidden rounded-3xl bg-[#FFE3D3] sm:h-72 lg:sticky lg:top-28 lg:h-80">
         <Image
           src={editorialImage}
           alt=""
@@ -166,21 +189,21 @@ export function ProductTabs({
           className="object-cover object-right"
         />
         {/* Perzik links voor leesbaarheid van de tekst */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#FFE3D3] via-[#FFE3D3]/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#FFE3D3] via-[#FFE3D3]/60 to-transparent" />
         {/* Hartje boven-links (zelfde als hero) */}
         <Image
           src="/images/heart.png"
           alt=""
           width={64}
           height={72}
-          className="absolute top-7 left-7 z-10 h-8 w-auto"
+          className="absolute top-6 left-6 z-10 h-7 w-auto"
         />
         {/* Tekst verticaal in het midden */}
-        <div className="absolute top-1/2 left-7 z-10 max-w-[58%] -translate-y-1/2">
-          <p className="font-poppins text-2xl leading-snug font-semibold whitespace-pre-line">
+        <div className="absolute top-1/2 left-6 z-10 max-w-[60%] -translate-y-1/2">
+          <p className="font-poppins text-xl leading-snug font-semibold whitespace-pre-line sm:text-2xl">
             {edTitle}
           </p>
-          <p className="text-foreground/80 mt-2 text-sm">{edSub}</p>
+          <p className="text-foreground/80 mt-1.5 text-sm">{edSub}</p>
         </div>
       </div>
     </div>

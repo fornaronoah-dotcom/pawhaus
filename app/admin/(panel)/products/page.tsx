@@ -4,6 +4,9 @@ import { isAdminConfigured } from "@/lib/shopify-admin";
 import { getStatusMap } from "@/lib/admin/product-status";
 import { DEFAULT_OPT_STATUS } from "@/lib/admin/opt-status";
 import { AdminNotConfigured } from "@/components/admin/AdminNotConfigured";
+import { PageHeader } from "@/components/admin/PageHeader";
+import { Callout } from "@/components/admin/Callout";
+import { requireAccess } from "@/lib/auth/guard";
 import { ProductControlCenter } from "./control-center";
 
 export const metadata: Metadata = {
@@ -14,10 +17,12 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function ProductsPage() {
+  await requireAccess("/admin/products");
+
   if (!isAdminConfigured) {
     return (
       <div className="flex flex-col gap-6">
-        <h1 className="text-2xl font-semibold tracking-tight">Producten</h1>
+        <PageHeader title="Producten" />
         <AdminNotConfigured />
       </div>
     );
@@ -40,19 +45,15 @@ export default async function ProductsPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Product Control Center
-        </h1>
-        <p className="text-muted-foreground text-sm">
-          Live uit Shopify — zoeken, sorteren, selecteren en bulk bewerken.
-        </p>
-      </div>
+      <PageHeader
+        title="Product Control Center"
+        description="Live uit Shopify — zoeken, sorteren, selecteren en bulk bewerken."
+      />
 
       {error ? (
-        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
-          Kon Shopify niet bereiken: {error}
-        </div>
+        <Callout variant="error" title="Kon Shopify niet bereiken">
+          {error}
+        </Callout>
       ) : (
         <ProductControlCenter rows={rows} hasMore={hasMore} />
       )}

@@ -14,7 +14,7 @@ export const DEFAULT_FLAGS: Record<FeatureKey, boolean> = {
   klanten: true, // gebouwd (Fase 4) — actief
   marketing: true, // gebouwd (Fase 4) — actief
   giveaways: true, // gebouwd (Fase 5) — actief
-  content: false,
+  content: true, // gebouwd (announcement-banners) — actief
   analytics: true, // gebouwd (Fase 6) — actief
 };
 

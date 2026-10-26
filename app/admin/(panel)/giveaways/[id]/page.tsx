@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getGiveaway, listEntries } from "@/lib/admin/giveaways";
+import { PageHeader } from "@/components/admin/PageHeader";
+import { Breadcrumb } from "@/components/admin/Breadcrumb";
+import { Callout } from "@/components/admin/Callout";
+import { requireAccess } from "@/lib/auth/guard";
 import { GiveawayControls } from "./giveaway-controls";
 
 export const metadata: Metadata = {
@@ -17,6 +20,7 @@ export default async function GiveawayDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requireAccess("/admin/giveaways");
   const { id } = await params;
   const giveaway = await getGiveaway(id);
   if (!giveaway) notFound();
@@ -31,20 +35,23 @@ export default async function GiveawayDetailPage({
 
   return (
     <div className="flex max-w-3xl flex-col gap-6">
-      <Link href="/admin/giveaways" className="text-muted-foreground hover:text-foreground text-sm">
-        ← Terug naar giveaways
-      </Link>
+      <Breadcrumb
+        items={[
+          { label: "Giveaways", href: "/admin/giveaways" },
+          { label: giveaway.title },
+        ]}
+      />
 
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{giveaway.title}</h1>
-        {giveaway.prize ? <p className="text-muted-foreground text-sm">Prijs: {giveaway.prize}</p> : null}
-        {giveaway.description ? <p className="mt-1 text-sm">{giveaway.description}</p> : null}
-      </div>
+      <PageHeader
+        title={giveaway.title}
+        description={giveaway.prize ? `Prijs: ${giveaway.prize}` : undefined}
+      />
+      {giveaway.description ? <p className="-mt-2 text-sm">{giveaway.description}</p> : null}
 
       {winner ? (
-        <div className="rounded-xl border border-green-300 bg-green-50 p-4 text-sm text-green-900">
-          🏆 <strong>Winnaar:</strong> {winner.name ? `${winner.name} — ` : ""}{winner.email}
-        </div>
+        <Callout variant="success" title="🏆 Winnaar">
+          {winner.name ? `${winner.name} — ` : ""}{winner.email}
+        </Callout>
       ) : null}
 
       <GiveawayControls
@@ -76,18 +83,18 @@ export default async function GiveawayDetailPage({
           <div className="overflow-x-auto rounded-xl ring-1 ring-foreground/10">
             <table className="w-full border-collapse text-sm">
               <thead>
-                <tr className="border-b bg-muted/50 text-left">
-                  <th className="px-3 py-2 font-medium">E-mail</th>
-                  <th className="px-3 py-2 font-medium">Naam</th>
-                  <th className="px-3 py-2 font-medium">Deelgenomen</th>
+                <tr className="bg-muted/60 text-muted-foreground text-left text-xs uppercase tracking-wide">
+                  <th className="px-3 py-2.5 font-medium">E-mail</th>
+                  <th className="px-3 py-2.5 font-medium">Naam</th>
+                  <th className="px-3 py-2.5 font-medium">Deelgenomen</th>
                 </tr>
               </thead>
               <tbody>
                 {entries.map((e) => (
-                  <tr key={e.id} className={`border-b last:border-0 ${e.id === giveaway.winnerEntryId ? "bg-green-50" : ""}`}>
-                    <td className="px-3 py-2">{e.email}</td>
-                    <td className="px-3 py-2">{e.name ?? "—"}</td>
-                    <td className="text-muted-foreground px-3 py-2 whitespace-nowrap">{dateFmt.format(new Date(e.createdAt))}</td>
+                  <tr key={e.id} className={`border-t border-border/60 transition-colors ${e.id === giveaway.winnerEntryId ? "bg-teal/10" : "hover:bg-accent/40"}`}>
+                    <td className="px-3 py-2.5">{e.email}</td>
+                    <td className="px-3 py-2.5">{e.name ?? "—"}</td>
+                    <td className="text-muted-foreground px-3 py-2.5 whitespace-nowrap tabular-nums">{dateFmt.format(new Date(e.createdAt))}</td>
                   </tr>
                 ))}
               </tbody>

@@ -2,12 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { PawPrint, Menu } from "lucide-react";
+import { useTheme } from "next-themes";
+import { Menu, Sun, Moon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { NAV, NAV_GROUPS, type FeatureKey } from "@/lib/admin/nav";
+import { canAccess, type AdminRole } from "@/lib/admin/roles";
 import {
   Sheet,
   SheetContent,
@@ -15,7 +18,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
-type SidebarUser = { name: string; email: string; role: string };
+type SidebarUser = { name: string; email: string; role: AdminRole };
 type Flags = Record<FeatureKey, boolean>;
 
 /** "Noah Fornaro" → "NF"; valt terug op de eerste letter. */
@@ -34,25 +37,27 @@ function isActive(pathname: string, href: string): boolean {
 
 function Brand() {
   return (
-    <div className="flex items-center gap-2.5 px-2 py-1">
-      <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
-        <PawPrint className="size-5" />
-      </span>
-      <span className="flex flex-col leading-tight">
-        <span className="font-baloo text-base font-semibold tracking-tight">
-          PAWHAUS
-        </span>
-        <span className="text-muted-foreground text-[11px]">Beheerpaneel</span>
-      </span>
+    <div className="flex flex-col gap-1.5 px-2 py-1">
+      <Image
+        src="/images/logo.png"
+        alt="Pawhaus"
+        width={468}
+        height={85}
+        priority
+        className="h-7 w-auto"
+      />
+      <span className="text-muted-foreground text-[11px]">Beheerpaneel</span>
     </div>
   );
 }
 
 function NavLinks({
   flags,
+  role,
   onNavigate,
 }: {
   flags: Flags;
+  role: AdminRole;
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
@@ -60,7 +65,9 @@ function NavLinks({
   return (
     <nav className="flex flex-col gap-5">
       {NAV_GROUPS.map((group) => {
-        const items = NAV.filter((item) => item.group === group);
+        const items = NAV.filter(
+          (item) => item.group === group && canAccess(role, item.href),
+        );
         if (items.length === 0) return null;
         return (
           <div key={group} className="flex flex-col gap-1">
@@ -111,6 +118,30 @@ function NavLinks({
   );
 }
 
+function ThemeToggle() {
+  const { setTheme } = useTheme();
+
+  // Lees de actuele modus uit de DOM bij klik (geen effect/state → geen
+  // hydration-mismatch). De iconen wisselen via de `dark:`-CSS-variant.
+  function toggle() {
+    const isDark = document.documentElement.classList.contains("dark");
+    setTheme(isDark ? "light" : "dark");
+  }
+
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      size="icon-sm"
+      aria-label="Thema wisselen"
+      onClick={toggle}
+    >
+      <Sun className="hidden dark:block" />
+      <Moon className="block dark:hidden" />
+    </Button>
+  );
+}
+
 function UserFooter({
   user,
   logoutAction,
@@ -130,6 +161,7 @@ function UserFooter({
             {user.email} · {user.role}
           </p>
         </div>
+        <ThemeToggle />
       </div>
       <form action={logoutAction}>
         <Button type="submit" variant="outline" size="sm" className="w-full">
@@ -165,7 +197,7 @@ export function AdminSidebar({
           <Brand />
         </div>
         <div className="flex-1 overflow-y-auto px-3 pb-4">
-          <NavLinks flags={flags} />
+          <NavLinks flags={flags} role={user.role} />
         </div>
         <div className="border-t px-4 py-4">
           <UserFooter user={user} logoutAction={logoutAction} />
@@ -189,7 +221,11 @@ export function AdminSidebar({
               <Brand />
             </div>
             <div className="flex-1 overflow-y-auto px-3 pb-4">
-              <NavLinks flags={flags} onNavigate={() => setOpen(false)} />
+              <NavLinks
+                flags={flags}
+                role={user.role}
+                onNavigate={() => setOpen(false)}
+              />
             </div>
             <div className="border-t px-4 py-4">
               <UserFooter user={user} logoutAction={logoutAction} />

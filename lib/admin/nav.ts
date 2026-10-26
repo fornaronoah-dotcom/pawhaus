@@ -7,7 +7,7 @@
 import {
   LayoutDashboard,
   Package,
-  Sparkles,
+  PackagePlus,
   Boxes,
   Tag,
   Users,
@@ -52,7 +52,7 @@ export const NAV: NavItem[] = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, group: "Overzicht" },
   { href: "/admin/analytics", label: "Analytics", icon: BarChart3, group: "Overzicht", flag: "analytics" },
   { href: "/admin/products", label: "Producten", icon: Package, group: "Catalogus" },
-  { href: "/admin/ai-review", label: "AI-review", icon: Sparkles, group: "Catalogus" },
+  { href: "/admin/nieuwe-producten", label: "Nieuwe producten", icon: PackagePlus, group: "Catalogus" },
   { href: "/admin/bundels", label: "Bundels", icon: Boxes, group: "Catalogus", flag: "bundels" },
   { href: "/admin/kortingen", label: "Kortingen", icon: Tag, group: "Groei", flag: "kortingen" },
   { href: "/admin/klanten", label: "Klanten", icon: Users, group: "Groei", flag: "klanten" },

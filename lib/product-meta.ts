@@ -41,6 +41,45 @@ export function parseAfmetingen(descHtml: string): string | null {
   return null;
 }
 
+export type DescriptionSection = { title: string; html: string };
+
+/**
+ * Splitst een lange beschrijving op in losse secties o.b.v. de <h2>/<h3>-koppen.
+ * Tekst vóór de eerste kop wordt de "Beschrijving"-sectie. Zonder koppen krijg
+ * je één enkele "Beschrijving"-sectie met de volledige inhoud.
+ */
+export function splitDescriptionSections(descHtml: string): DescriptionSection[] {
+  const html = (descHtml || "").trim();
+  if (!html) return [];
+
+  const headingRe = /<h[23][^>]*>([\s\S]*?)<\/h[23]>/gi;
+  const matches = [...html.matchAll(headingRe)];
+
+  if (matches.length === 0) {
+    return [{ title: "Beschrijving", html }];
+  }
+
+  const sections: DescriptionSection[] = [];
+
+  // Inhoud vóór de eerste kop = intro.
+  const intro = html.slice(0, matches[0].index).trim();
+  if (stripHtml(intro)) {
+    sections.push({ title: "Beschrijving", html: intro });
+  }
+
+  matches.forEach((m, i) => {
+    const title = stripHtml(m[1]);
+    const start = (m.index ?? 0) + m[0].length;
+    const end = i + 1 < matches.length ? matches[i + 1].index : html.length;
+    const body = html.slice(start, end).trim();
+    if (title && stripHtml(body)) {
+      sections.push({ title, html: body });
+    }
+  });
+
+  return sections.length > 0 ? sections : [{ title: "Beschrijving", html }];
+}
+
 /** Korte highlight-teksten uit de eerste <ul> van de beschrijving (max 4). */
 export function highlightsFromDescription(descHtml: string, max = 3): string[] {
   const ul = (descHtml || "").match(/<ul>([\s\S]*?)<\/ul>/i);

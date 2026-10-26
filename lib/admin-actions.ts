@@ -5,6 +5,7 @@ import { requireAdmin } from "@/lib/auth/guard";
 import {
   updateAdminProduct,
   setMainImage,
+  removeProductTags,
   productGid,
 } from "@/lib/admin-products";
 import { setStatusMany } from "@/lib/admin/product-status";
@@ -142,6 +143,29 @@ export async function setOptStatusAction(
     targetType: "product",
     targetId: numericId,
     message: `Optimalisatie-status → ${status}`,
+  });
+  return { ok: true };
+}
+
+/**
+ * Markeert een nieuw product als afgewerkt: verwijdert de `nieuw-product`-tag
+ * (waardoor het van de "Nieuwe producten"-werklijst verdwijnt).
+ */
+export async function markNewProductDoneAction(
+  gid: string,
+  numericId: string,
+): Promise<{ ok: boolean; error?: string }> {
+  const user = await requireAdmin();
+  const res = await removeProductTags(gid, ["nieuw-product"]);
+  if (!res.ok) return { ok: false, error: res.error };
+  updateTag("products");
+  revalidatePath("/admin/nieuwe-producten");
+  await logActivity({
+    actor: user.id,
+    action: "product.new.done",
+    targetType: "product",
+    targetId: numericId,
+    message: "Nieuw product gemarkeerd als afgewerkt (tag nieuw-product verwijderd)",
   });
   return { ok: true };
 }

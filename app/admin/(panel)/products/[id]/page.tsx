@@ -1,25 +1,26 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAdminProduct } from "@/lib/admin-products";
 import { isAdminConfigured } from "@/lib/shopify-admin";
 import { getStatusMap } from "@/lib/admin/product-status";
 import { DEFAULT_OPT_STATUS } from "@/lib/admin/opt-status";
 import { activityForTarget } from "@/lib/admin/activity";
-import {
-  getFlowSentSet,
-  listDraftsForProduct,
-} from "@/lib/admin/media-review";
+import { listDraftsForProduct } from "@/lib/admin/media-review";
 import { AdminNotConfigured } from "@/components/admin/AdminNotConfigured";
 import { StatusBadge } from "@/components/admin/StatusBadge";
+import { PageHeader } from "@/components/admin/PageHeader";
+import { Breadcrumb } from "@/components/admin/Breadcrumb";
+import { Callout } from "@/components/admin/Callout";
+import { requireAccess } from "@/lib/auth/guard";
+import { getProductVariants, type ProductVariantsResult } from "@/lib/admin-variants";
+import { VariantsEditor } from "./variants-editor";
 import { Tabs } from "@/components/ui/tabs";
 import { formatPrice } from "@/lib/utils";
-import { isAiConfigured } from "@/lib/ai/gemini";
 import { EditForm } from "./edit-form";
 import { MediaGallery } from "./media-gallery";
 import { OptStatusSelect } from "./opt-status-select";
-import { AiOptimizer } from "./ai-optimizer";
 import { ImageWorkflow } from "./image-workflow";
+import { isImageAiConfigured } from "@/lib/ai/images/providers";
 
 export const metadata: Metadata = {
   title: "Product bewerken",
@@ -38,12 +39,13 @@ export default async function ProductDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requireAccess("/admin/products");
   const { id } = await params;
 
   if (!isAdminConfigured) {
     return (
       <div className="flex flex-col gap-6">
-        <BackLink />
+        <Breadcrumb items={CRUMBS} />
         <AdminNotConfigured />
       </div>
     );
@@ -60,23 +62,30 @@ export default async function ProductDetailPage({
   if (loadError) {
     return (
       <div className="flex flex-col gap-6">
-        <BackLink />
-        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
-          Kon product niet laden uit Shopify: {loadError}
-        </div>
+        <Breadcrumb items={CRUMBS} />
+        <Callout variant="error" title="Kon product niet laden uit Shopify">
+          {loadError}
+        </Callout>
       </div>
     );
   }
 
   if (!product) notFound();
 
-  const [statusMap, logs, flowSent, drafts] = await Promise.all([
+  const [statusMap, logs, drafts] = await Promise.all([
     getStatusMap([product.id]),
     activityForTarget(product.numericId, 20),
-    getFlowSentSet(product.id),
     listDraftsForProduct(product.numericId),
   ]);
   const optStatus = statusMap.get(product.id) ?? DEFAULT_OPT_STATUS;
+
+  // Varianten apart en defensief ophalen (faalt nooit de hele pagina).
+  let variantData: ProductVariantsResult = { variants: [], locationId: null };
+  try {
+    variantData = await getProductVariants(product.id);
+  } catch {
+    // stilletjes negeren — de prijs/voorraad-sectie toont dan niets
+  }
 
   const storeDomain = (
     process.env.SHOPIFY_SHOP_DOMAIN ?? process.env.SHOPIFY_STORE_DOMAIN
@@ -111,6 +120,21 @@ export default async function ProductDetailPage({
         <MediaGallery numericId={product.numericId} media={product.media} />
       </div>
 
+      {variantData.variants.length > 0 ? (
+        <div className="rounded-xl bg-card p-5 ring-1 ring-foreground/10">
+          <h2 className="mb-1 text-base font-medium">Varianten — prijs &amp; voorraad</h2>
+          <p className="text-muted-foreground mb-4 text-sm">
+            Prijs schrijft direct naar Shopify. Voorraad vereist de scope
+            <code> write_inventory</code>.
+          </p>
+          <VariantsEditor
+            productGid={product.id}
+            variants={variantData.variants}
+            locationId={variantData.locationId}
+          />
+        </div>
+      ) : null}
+
       <div className="rounded-xl bg-card p-5 ring-1 ring-foreground/10">
         <h2 className="mb-4 text-base font-medium">Bewerken</h2>
         <EditForm
@@ -120,25 +144,6 @@ export default async function ProductDetailPage({
           tags={product.tags}
           seoTitle={product.seoTitle}
           seoDescription={product.seoDescription}
-        />
-      </div>
-
-      <div className="rounded-xl bg-card p-5 ring-1 ring-foreground/10">
-        <h2 className="mb-1 text-base font-medium">AI-tekstoptimizer (Gemini)</h2>
-        <p className="text-muted-foreground mb-4 text-sm">
-          Genereer een concept, controleer het, en publiceer pas na jouw
-          goedkeuring naar Shopify.
-        </p>
-        <AiOptimizer
-          numericId={product.numericId}
-          aiConfigured={isAiConfigured}
-          original={{
-            title: product.title,
-            descriptionHtml: product.descriptionHtml,
-            seoTitle: product.seoTitle,
-            seoDescription: product.seoDescription,
-            tags: product.tags,
-          }}
         />
       </div>
 
@@ -164,22 +169,19 @@ export default async function ProductDetailPage({
     <ImageWorkflow
       numericId={product.numericId}
       shopifyProductGid={product.id}
-      title={product.title}
-      productType={product.productType}
-      tags={product.tags}
       media={product.media}
-      flowSent={[...flowSent]}
       drafts={drafts}
+      imageAiEnabled={isImageAiConfigured}
     />
   );
 
   return (
     <div className="flex max-w-4xl flex-col gap-6">
-      <BackLink />
-      <div className="flex flex-wrap items-center gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">{product.title}</h1>
-        <StatusBadge status={product.status} />
-      </div>
+      <Breadcrumb items={[...CRUMBS.slice(0, -1), { label: product.title }]} />
+      <PageHeader
+        title={product.title}
+        badge={<StatusBadge status={product.status} />}
+      />
 
       <Tabs
         tabs={[
@@ -191,10 +193,7 @@ export default async function ProductDetailPage({
   );
 }
 
-function BackLink() {
-  return (
-    <Link href="/admin/products" className="text-muted-foreground hover:text-foreground text-sm">
-      ← Terug naar producten
-    </Link>
-  );
-}
+const CRUMBS = [
+  { label: "Producten", href: "/admin/products" },
+  { label: "Product" },
+];

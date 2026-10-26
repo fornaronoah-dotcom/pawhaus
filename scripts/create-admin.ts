@@ -4,6 +4,7 @@ import { hash } from "@node-rs/argon2";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { adminUsers } from "../lib/db/schema";
+import { ADMIN_ROLES, type AdminRole } from "../lib/admin/roles";
 
 /**
  * Maakt (of werkt bij) een admin-gebruiker. NIET als publieke signup — enkel
@@ -64,13 +65,13 @@ async function main() {
     argOf("--role") ??
     process.env.ADMIN_ROLE ??
     "owner"
-  ).trim() as "owner" | "editor";
+  ).trim() as AdminRole;
 
   if (!email || !name || !password) {
     throw new Error("E-mail, naam én wachtwoord zijn verplicht.");
   }
-  if (role !== "owner" && role !== "editor") {
-    throw new Error("Rol moet 'owner' of 'editor' zijn.");
+  if (!(ADMIN_ROLES as readonly string[]).includes(role)) {
+    throw new Error(`Rol moet één van zijn: ${ADMIN_ROLES.join(", ")}.`);
   }
   if (password.length < 10) {
     throw new Error("Kies een wachtwoord van minstens 10 tekens.");

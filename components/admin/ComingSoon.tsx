@@ -1,3 +1,7 @@
+import { Circle, Settings as SettingsIcon } from "lucide-react";
+import { PageHeader } from "@/components/admin/PageHeader";
+import { Card } from "@/components/ui/card";
+
 export function ComingSoon({
   label,
   description,
@@ -11,29 +15,30 @@ export function ComingSoon({
 }) {
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-semibold tracking-tight">{label}</h1>
-          <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
+      <PageHeader
+        title={label}
+        description={description}
+        badge={
+          <span className="bg-brand/20 text-brand-foreground rounded-full px-2.5 py-0.5 text-xs font-medium">
             {enabled ? "Geactiveerd · in ontwikkeling" : "Binnenkort"}
           </span>
-        </div>
-        <p className="text-muted-foreground mt-1 text-sm">{description}</p>
-      </div>
+        }
+      />
 
-      <div className="max-w-md rounded-xl border bg-card p-5">
-        <p className="mb-2 text-sm font-medium">Gepland in deze module</p>
-        <ul className="text-muted-foreground flex flex-col gap-1 text-sm">
+      <Card className="max-w-md gap-0 p-5">
+        <p className="mb-3 text-sm font-medium">Gepland in deze module</p>
+        <ul className="flex flex-col gap-2 text-sm">
           {planned.map((p) => (
-            <li key={p} className="flex items-center gap-2">
-              <span className="text-muted-foreground/50">○</span>
+            <li key={p} className="text-muted-foreground flex items-center gap-2.5">
+              <Circle className="size-3.5 shrink-0 opacity-50" />
               {p}
             </li>
           ))}
         </ul>
-      </div>
+      </Card>
 
-      <p className="text-muted-foreground text-xs">
+      <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
+        <SettingsIcon className="size-3.5" />
         Deze module is voorzien in de structuur en wordt geleidelijk geactiveerd.
         De owner kan modules aan/uit zetten bij <strong>Instellingen</strong>.
       </p>

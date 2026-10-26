@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Headphones, Heart, RotateCcw, ShieldCheck, Truck } from "lucide-react";
-import { toast } from "sonner";
 import { AddToCartButton } from "@/components/AddToCartButton";
+import { useFavorites } from "@/components/favorites/favorites-context";
 import { QuantitySelector } from "@/components/QuantitySelector";
 import { Badge } from "@/components/ui/badge";
 import { cn, discountPercent, formatPrice, isOnSale } from "@/lib/utils";
@@ -36,7 +36,8 @@ export function ProductInfo({
     );
   });
   const [quantity, setQuantity] = useState(1);
-  const [fav, setFav] = useState(false);
+  const { isFavorite, toggle: toggleFavorite } = useFavorites();
+  const fav = isFavorite(product.handle);
 
   const selectedVariant = useMemo(
     () => product.variants.find((v) => variantMatches(v, selected)) ?? null,
@@ -170,15 +171,7 @@ export function ProductInfo({
           type="button"
           aria-pressed={fav}
           aria-label={fav ? "Verwijder uit favorieten" : "Voeg toe aan favorieten"}
-          onClick={() => {
-            const next = !fav;
-            setFav(next);
-            toast.success(
-              next
-                ? `${product.title} toegevoegd aan favorieten`
-                : "Verwijderd uit favorieten",
-            );
-          }}
+          onClick={() => toggleFavorite(product.handle)}
           className="border-border hover:border-primary/50 grid size-12 shrink-0 place-items-center rounded-full border transition hover:-translate-y-0.5"
         >
           <Heart

@@ -5,6 +5,9 @@ import {
 } from "@/lib/admin-customers";
 import { isAdminConfigured } from "@/lib/shopify-admin";
 import { AdminNotConfigured } from "@/components/admin/AdminNotConfigured";
+import { PageHeader } from "@/components/admin/PageHeader";
+import { Callout } from "@/components/admin/Callout";
+import { requireAccess } from "@/lib/auth/guard";
 import { MarketingPanel, type Subscriber } from "./marketing-panel";
 
 export const metadata: Metadata = {
@@ -14,10 +17,12 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function MarketingPage() {
+  await requireAccess("/admin/marketing");
+
   if (!isAdminConfigured) {
     return (
       <div className="flex flex-col gap-6">
-        <h1 className="text-2xl font-semibold tracking-tight">Marketing</h1>
+        <PageHeader title="Marketing" />
         <AdminNotConfigured />
       </div>
     );
@@ -45,22 +50,19 @@ export default async function MarketingPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Marketing &amp; e-mail</h1>
-        <p className="text-muted-foreground text-sm">
-          Nieuwsbrief-inschrijvingen en segmenten. Inschrijvingen worden Shopify-
-          klanten met marketingtoestemming.
-        </p>
-      </div>
+      <PageHeader
+        title="Marketing & e-mail"
+        description="Nieuwsbrief-inschrijvingen en segmenten. Inschrijvingen worden Shopify-klanten met marketingtoestemming."
+      />
 
       {scopeMissing ? (
-        <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
+        <Callout variant="warning">
           Scope <code>read_customers</code> nodig — autoriseer de app opnieuw (zie Klanten).
-        </div>
+        </Callout>
       ) : error ? (
-        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
-          Kon gegevens niet laden: {error}
-        </div>
+        <Callout variant="error" title="Kon gegevens niet laden">
+          {error}
+        </Callout>
       ) : (
         <MarketingPanel subscribers={subscribers} totalCustomers={totalCustomers} />
       )}

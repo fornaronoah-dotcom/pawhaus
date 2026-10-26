@@ -2,8 +2,12 @@ import type { Metadata } from "next";
 import { getCoreMetrics, getOrdersSummary } from "@/lib/admin-analytics";
 import { isAdminConfigured } from "@/lib/shopify-admin";
 import { AdminNotConfigured } from "@/components/admin/AdminNotConfigured";
+import { PageHeader } from "@/components/admin/PageHeader";
+import { Callout } from "@/components/admin/Callout";
+import { requireAccess } from "@/lib/auth/guard";
 import { OPT_STATUS_LABELS } from "@/lib/admin/opt-status";
 import { formatPrice } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
 import type { OptStatus } from "@/lib/db/schema";
 
 export const metadata: Metadata = {
@@ -14,19 +18,23 @@ export const dynamic = "force-dynamic";
 
 function Stat({ label, value, sub }: { label: string; value: string | number; sub?: string }) {
   return (
-    <div className="rounded-xl border bg-card p-4">
-      <p className="text-muted-foreground text-sm">{label}</p>
-      <p className="text-2xl font-semibold">{value}</p>
-      {sub ? <p className="text-muted-foreground text-xs">{sub}</p> : null}
-    </div>
+    <Card className="gap-0 p-5">
+      <p className="text-muted-foreground text-sm font-medium">{label}</p>
+      <p className="font-baloo mt-2 text-3xl font-semibold tracking-tight tabular-nums">
+        {value}
+      </p>
+      {sub ? <p className="text-muted-foreground mt-1 text-xs">{sub}</p> : null}
+    </Card>
   );
 }
 
 export default async function AnalyticsPage() {
+  await requireAccess("/admin/analytics");
+
   if (!isAdminConfigured) {
     return (
       <div className="flex flex-col gap-6">
-        <h1 className="text-2xl font-semibold tracking-tight">Analytics</h1>
+        <PageHeader title="Analytics" />
         <AdminNotConfigured />
       </div>
     );
@@ -44,28 +52,25 @@ export default async function AnalyticsPage() {
   if (error || !m) {
     return (
       <div className="flex flex-col gap-6">
-        <h1 className="text-2xl font-semibold tracking-tight">Analytics</h1>
-        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
-          Kon analytics niet laden: {error}
-        </div>
+        <PageHeader title="Analytics" />
+        <Callout variant="error" title="Kon analytics niet laden">
+          {error}
+        </Callout>
       </div>
     );
   }
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Analytics</h1>
-        <p className="text-muted-foreground text-sm">Live overzicht van je winkel.</p>
-      </div>
+      <PageHeader title="Analytics" description="Live overzicht van je winkel." />
 
       {/* Omzet */}
       <section className="flex flex-col gap-2">
         <h2 className="text-base font-medium">Omzet (laatste 30 dagen)</h2>
         {orders && orders.scopeMissing ? (
-          <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
+          <Callout variant="warning">
             Voeg de scope <code>read_orders</code> toe (app 378135740417) en autoriseer opnieuw om omzet, bestellingen en gemiddelde orderwaarde te zien.
-          </div>
+          </Callout>
         ) : orders && !orders.scopeMissing ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Stat label="Omzet vandaag" value={orders.revenueToday ? formatPrice(orders.revenueToday) : "€ 0,00"} />

@@ -1,4 +1,5 @@
 import { missingAdminConfig } from "@/lib/shopify-admin";
+import { Callout } from "@/components/admin/Callout";
 
 /**
  * Duidelijke, prominente melding wanneer de Shopify Admin API nog niet is
@@ -8,9 +9,8 @@ export function AdminNotConfigured() {
   const missing = missingAdminConfig();
 
   return (
-    <div className="rounded-xl border border-amber-300 bg-amber-50 p-5 text-amber-900">
-      <p className="font-semibold">Shopify Admin API nog niet ingesteld</p>
-      <p className="mt-1 text-sm">
+    <Callout variant="warning" title="Shopify Admin API nog niet ingesteld">
+      <p className="text-sm">
         Het beheerpaneel kan nog geen producten ophalen of wijzigen. Vul de
         volgende variabele(n) in <code>.env.local</code> in en herstart de
         dev-server:
@@ -29,6 +29,6 @@ export function AdminNotConfigured() {
         <code>read_products</code> en <code>write_products</code>. Géén OAuth,
         Client ID of Client secret nodig.
       </p>
-    </div>
+    </Callout>
   );
 }

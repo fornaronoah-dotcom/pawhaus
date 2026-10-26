@@ -9,25 +9,20 @@ export function ProductGrid({
 }: {
   products: Product[];
   className?: string;
-  variant?: "default" | "polaroid";
+  variant?: "default" | "featured";
 }) {
   return (
     <div
       className={cn(
         "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4",
-        variant === "polaroid"
-          ? "gap-x-5 gap-y-10 sm:gap-x-6"
+        variant === "featured"
+          ? "gap-x-5 gap-y-8 sm:gap-x-6"
           : "gap-x-4 gap-y-8",
         className,
       )}
     >
-      {products.map((product, i) => (
-        <ProductCard
-          key={product.id}
-          product={product}
-          variant={variant}
-          index={i}
-        />
+      {products.map((product) => (
+        <ProductCard key={product.id} product={product} variant={variant} />
       ))}
     </div>
   );

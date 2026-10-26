@@ -9,6 +9,7 @@ import {
 } from "@/lib/newsletter-actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { StatCard } from "@/components/admin/StatCard";
 
 export type Subscriber = {
   numericId: string;
@@ -61,11 +62,12 @@ export function MarketingPanel({
     <div className="flex flex-col gap-6">
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <Stat label="Abonnees" value={subscribers.length} />
-        <Stat label="Totaal klanten" value={totalCustomers} />
-        <Stat
+        <StatCard label="Abonnees" value={subscribers.length} tone="primary" />
+        <StatCard label="Totaal klanten" value={totalCustomers} tone="sky" />
+        <StatCard
           label="Abonnee-ratio"
           value={totalCustomers ? Math.round((subscribers.length / totalCustomers) * 100) + "%" : "—"}
+          tone="teal"
         />
       </div>
 
@@ -98,18 +100,18 @@ export function MarketingPanel({
           <div className="overflow-x-auto rounded-xl ring-1 ring-foreground/10">
             <table className="w-full border-collapse text-sm">
               <thead>
-                <tr className="border-b bg-muted/50 text-left">
-                  <th className="px-3 py-2 font-medium">E-mail</th>
-                  <th className="px-3 py-2 font-medium">Naam</th>
-                  <th className="px-3 py-2 font-medium">Klant sinds</th>
+                <tr className="bg-muted/60 text-muted-foreground text-left text-xs uppercase tracking-wide">
+                  <th className="px-3 py-2.5 font-medium">E-mail</th>
+                  <th className="px-3 py-2.5 font-medium">Naam</th>
+                  <th className="px-3 py-2.5 font-medium">Klant sinds</th>
                 </tr>
               </thead>
               <tbody>
                 {subscribers.map((s) => (
-                  <tr key={s.numericId} className="border-b last:border-0 hover:bg-muted/40">
-                    <td className="px-3 py-2">{s.email ?? "—"}</td>
-                    <td className="px-3 py-2">{s.name}</td>
-                    <td className="text-muted-foreground px-3 py-2 whitespace-nowrap">
+                  <tr key={s.numericId} className="hover:bg-accent/40 border-t border-border/60 transition-colors">
+                    <td className="px-3 py-2.5">{s.email ?? "—"}</td>
+                    <td className="px-3 py-2.5">{s.name}</td>
+                    <td className="text-muted-foreground px-3 py-2.5 whitespace-nowrap tabular-nums">
                       {dateFmt.format(new Date(s.createdAt))}
                     </td>
                   </tr>
@@ -125,15 +127,6 @@ export function MarketingPanel({
         gebruik de CSV-export of het Shopify-marketingsegment. Dit paneel beheert
         de inschrijvingen + toestemming (Shopify = bron).
       </p>
-    </div>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: string | number }) {
-  return (
-    <div className="rounded-xl border bg-card p-4">
-      <p className="text-muted-foreground text-sm">{label}</p>
-      <p className="text-2xl font-semibold">{value}</p>
     </div>
   );
 }

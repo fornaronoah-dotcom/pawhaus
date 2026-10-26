@@ -5,6 +5,9 @@ import { fetchAdminProducts } from "@/lib/admin-products";
 import { listBundles } from "@/lib/admin-bundles";
 import { isAdminConfigured } from "@/lib/shopify-admin";
 import { AdminNotConfigured } from "@/components/admin/AdminNotConfigured";
+import { PageHeader } from "@/components/admin/PageHeader";
+import { Callout } from "@/components/admin/Callout";
+import { requireAccess } from "@/lib/auth/guard";
 import { formatPrice } from "@/lib/utils";
 import { BundleBuilder, type PickerProduct } from "./bundle-builder";
 
@@ -15,10 +18,12 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function BundelsPage() {
+  await requireAccess("/admin/bundels");
+
   if (!isAdminConfigured) {
     return (
       <div className="flex flex-col gap-6">
-        <h1 className="text-2xl font-semibold tracking-tight">Bundels</h1>
+        <PageHeader title="Bundels" />
         <AdminNotConfigured />
       </div>
     );
@@ -49,18 +54,15 @@ export default async function BundelsPage() {
 
   return (
     <div className="flex max-w-4xl flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Bundels</h1>
-        <p className="text-muted-foreground text-sm">
-          Stel een bundel samen die als één product in Shopify verkoopt. Shopify
-          beheert de voorraad van de onderdelen.
-        </p>
-      </div>
+      <PageHeader
+        title="Bundels"
+        description="Stel een bundel samen die als één product in Shopify verkoopt. Shopify beheert de voorraad van de onderdelen."
+      />
 
       {error ? (
-        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
-          Kon gegevens niet laden: {error}
-        </div>
+        <Callout variant="error" title="Kon gegevens niet laden">
+          {error}
+        </Callout>
       ) : (
         <>
           <BundleBuilder products={products} />
@@ -73,16 +75,16 @@ export default async function BundelsPage() {
               <div className="overflow-x-auto rounded-xl ring-1 ring-foreground/10">
                 <table className="w-full border-collapse text-sm">
                   <thead>
-                    <tr className="border-b bg-muted/50 text-left">
-                      <th className="w-12 px-2 py-2"></th>
-                      <th className="px-3 py-2 font-medium">Titel</th>
-                      <th className="px-3 py-2 font-medium">Prijs</th>
-                      <th className="px-3 py-2 font-medium">Status</th>
+                    <tr className="bg-muted/60 text-muted-foreground text-left text-xs uppercase tracking-wide">
+                      <th className="w-12 px-2 py-2.5"></th>
+                      <th className="px-3 py-2.5 font-medium">Titel</th>
+                      <th className="px-3 py-2.5 font-medium">Prijs</th>
+                      <th className="px-3 py-2.5 font-medium">Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     {bundles.map((b) => (
-                      <tr key={b.id} className="border-b last:border-0 hover:bg-muted/40">
+                      <tr key={b.id} className="hover:bg-accent/40 border-t border-border/60 transition-colors">
                         <td className="px-2 py-2">
                           {b.image?.url ? (
                             <Image src={b.image.url} alt="" width={36} height={36} className="h-9 w-9 rounded object-cover ring-1 ring-foreground/10" />

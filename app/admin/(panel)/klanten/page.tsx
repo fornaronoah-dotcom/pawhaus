@@ -6,6 +6,9 @@ import {
 } from "@/lib/admin-customers";
 import { isAdminConfigured } from "@/lib/shopify-admin";
 import { AdminNotConfigured } from "@/components/admin/AdminNotConfigured";
+import { PageHeader } from "@/components/admin/PageHeader";
+import { Callout } from "@/components/admin/Callout";
+import { requireAccess } from "@/lib/auth/guard";
 import { KlantenList } from "./klanten-list";
 
 export const metadata: Metadata = {
@@ -15,10 +18,12 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function KlantenPage() {
+  await requireAccess("/admin/klanten");
+
   if (!isAdminConfigured) {
     return (
       <div className="flex flex-col gap-6">
-        <h1 className="text-2xl font-semibold tracking-tight">Klanten</h1>
+        <PageHeader title="Klanten" />
         <AdminNotConfigured />
       </div>
     );
@@ -37,26 +42,21 @@ export default async function KlantenPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Klanten (CRM)</h1>
-        <p className="text-muted-foreground text-sm">
-          Live uit Shopify — zoeken, segmenteren en exporteren. Shopify blijft bron van waarheid.
-        </p>
-      </div>
+      <PageHeader
+        title="Klanten (CRM)"
+        description="Live uit Shopify — zoeken, segmenteren en exporteren. Shopify blijft bron van waarheid."
+      />
 
       {scopeMissing ? (
-        <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
-          <p className="font-semibold">Eenmalige toestemming nodig: <code>read_customers</code></p>
-          <p className="mt-1">
-            Voeg de scope toe aan de juiste Dev Dashboard-app (378135740417) en
-            autoriseer opnieuw — daarna werkt deze module meteen. Vraag de
-            assistent om je door de korte her-autorisatie te loodsen.
-          </p>
-        </div>
+        <Callout variant="warning" title={<>Eenmalige toestemming nodig: <code>read_customers</code></>}>
+          Voeg de scope toe aan de juiste Dev Dashboard-app (378135740417) en
+          autoriseer opnieuw — daarna werkt deze module meteen. Vraag de
+          assistent om je door de korte her-autorisatie te loodsen.
+        </Callout>
       ) : error ? (
-        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
-          Kon klanten niet laden: {error}
-        </div>
+        <Callout variant="error" title="Kon klanten niet laden">
+          {error}
+        </Callout>
       ) : (
         <KlantenList customers={customers} />
       )}

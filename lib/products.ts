@@ -9,6 +9,10 @@ import {
 import { isShopifyConfigured, shopifyFetch } from "@/lib/shopify";
 import { MOCK_COLLECTIONS, MOCK_PRODUCTS } from "@/lib/mock";
 import { colorHex, productColors } from "@/lib/utils";
+import {
+  productCategory,
+  CATEGORY_ORDER,
+} from "@/lib/product-category";
 import type {
   Collection,
   Facets,
@@ -34,42 +38,16 @@ function excludeHidden(products: Product[]): Product[] {
   return products.filter((p) => !HIDDEN_HANDLES.has(p.handle));
 }
 
-/**
- * Bundelt de (granulaire) Shopify-`productType` in vriendelijke subcategorieën,
- * bv. "SNACKS KOEK" → Snacks, "DROOGVOER" → Voeding. Regel-gebaseerd zodat
- * nieuwe producttypes automatisch in de juiste groep vallen.
- */
-const CATEGORY_RULES: {
-  key: string;
-  label: string;
-  test: RegExp;
-}[] = [
-  { key: "snacks", label: "Snacks", test: /SNACK|KAUW|BEEN/ },
-  { key: "voeding", label: "Voeding", test: /DROOGVOER|NATVOER|VOEDING|BROK/ },
-  // Kattenbak(ken) + vulling MOET vóór de generieke /BAK/-regel staan,
-  // anders pakt "Voer- & drinkbakken" per ongeluk "kattenBAK".
-  { key: "kattenbak", label: "Kattenbakken", test: /KATTENBAK/ },
-  { key: "krabpalen", label: "Krabpalen", test: /KRAB/ },
-  { key: "bakken", label: "Voer- & drinkbakken", test: /BAK/ },
-  { key: "manden", label: "Manden & kussens", test: /BED|MAND|KUSSEN|SLAAP/ },
-  { key: "speelgoed", label: "Speelgoed", test: /SPEEL|DUMMY|BAL/ },
-  { key: "verzorging", label: "Verzorging", test: /VERZORG|HYGI|VACHT|PADS|SHAMPOO/ },
-];
-
-export function productCategory(productType: string): ProductCategory {
-  const t = (productType || "").toUpperCase();
-  for (const rule of CATEGORY_RULES) {
-    if (rule.test.test(t)) return { key: rule.key, label: rule.label };
-  }
-  return { key: "accessoires", label: "Accessoires" };
-}
+// Categorie-logica is client-veilig uitgesplitst zodat ook het admin-paneel
+// (client-component) dezelfde subcategorieën kan gebruiken.
+export { productCategory } from "@/lib/product-category";
 
 /** De subcategorieën die daadwerkelijk in deze productenlijst voorkomen, op vaste volgorde. */
 export function availableCategories(products: Product[]): ProductCategory[] {
-  const order = [...CATEGORY_RULES.map((r) => r.key), "accessoires"];
+  const order = CATEGORY_ORDER;
   const seen = new Map<string, ProductCategory>();
   for (const p of products) {
-    const c = productCategory(p.productType);
+    const c = productCategory(p.productType, p.title);
     if (!seen.has(c.key)) seen.set(c.key, c);
   }
   return [...seen.values()].sort(
@@ -79,7 +57,7 @@ export function availableCategories(products: Product[]): ProductCategory[] {
 
 /** Bouwt de beschikbare facetten + tellingen voor een (dier/zoek-)scope. */
 export function buildFacets(products: Product[]): Facets {
-  const order = [...CATEGORY_RULES.map((r) => r.key), "accessoires"];
+  const order = CATEGORY_ORDER;
 
   const catCount = new Map<string, FacetOption>();
   const brandCount = new Map<string, FacetOption>();
@@ -92,7 +70,7 @@ export function buildFacets(products: Product[]): Facets {
     if (price < priceMin) priceMin = price;
     if (price > priceMax) priceMax = price;
 
-    const c = productCategory(p.productType);
+    const c = productCategory(p.productType, p.title);
     const cat = catCount.get(c.key) ?? { value: c.key, label: c.label, count: 0 };
     cat.count++;
     catCount.set(c.key, cat);
@@ -133,7 +111,7 @@ export function applyFacets(
   return products.filter((p) => {
     if (
       sel.types.length &&
-      !sel.types.includes(productCategory(p.productType).key)
+      !sel.types.includes(productCategory(p.productType, p.title).key)
     )
       return false;
     if (sel.brands.length && !sel.brands.includes((p.vendor || "").toLowerCase()))

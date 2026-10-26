@@ -39,19 +39,21 @@ const WHY = [
 const CATEGORIES = [
   {
     href: "/producten?category=hond",
-    title: "Voor de hond",
-    description: "Halsbanden, riemen, manden & speelgoed",
+    label: "Honden",
     image: "/images/categorie-hond.jpg",
-    alt: "Duitse herder",
-    cta: "Shop honden",
+    alt: "Vrolijke Duitse herder",
+    cta: "Bekijk honden",
+    bg: "#A8D4E1",
+    objectPosition: "object-center",
   },
   {
     href: "/producten?category=kat",
-    title: "Voor de kat",
-    description: "Krabpalen, voerbakken, manden & meer",
+    label: "Katten",
     image: "/images/categorie-kat.jpg",
-    alt: "Witte langharige kat",
-    cta: "Shop katten",
+    alt: "Witte pers die zich aflikt",
+    cta: "Bekijk katten",
+    bg: "#F8D76C",
+    objectPosition: "object-center",
   },
 ];
 
@@ -87,23 +89,42 @@ export default async function HomePage() {
             <Link
               key={cat.href}
               href={cat.href}
-              className="group ring-foreground/5 relative flex aspect-[16/10] flex-col justify-end overflow-hidden rounded-2xl ring-1 transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-[0_22px_45px_rgba(12,42,90,0.25)]"
+              className="group ring-foreground/5 relative block aspect-[16/10] overflow-hidden rounded-[28px] ring-1 transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-[0_22px_45px_rgba(12,42,90,0.25)]"
+              style={{ backgroundColor: cat.bg }}
             >
+              {/* Volledige foto — dier gecentreerd, achtergrond gelijk aan de kaartkleur */}
               <Image
                 src={cat.image}
                 alt={cat.alt}
                 fill
                 sizes="(min-width: 640px) 50vw, 100vw"
-                className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                className={`object-cover ${cat.objectPosition} transition-transform duration-500 ease-out group-hover:scale-[1.03]`}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent" />
-              <div className="relative space-y-1 p-6 text-white">
-                <h2 className="text-3xl font-medium">{cat.title}</h2>
-                <p className="text-sm text-white/80">{cat.description}</p>
-                <span className="mt-3 inline-flex w-max translate-y-1 items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#0C2A5A] opacity-0 shadow-sm transition-all duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100">
-                  {cat.cta}
-                  <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-                </span>
+
+              {/* Tekst linksonder, CTA rechtsonder */}
+              <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-8 lg:p-10">
+                <div className="flex items-end justify-between gap-4">
+                  <div>
+                    <p className="font-display flex items-center gap-2 text-2xl font-medium text-[#0C2A5A] sm:text-3xl">
+                      Voor
+                      <Image
+                        src="/images/heart.png"
+                        alt=""
+                        width={102}
+                        height={116}
+                        className="h-[0.7em] w-auto"
+                      />
+                    </p>
+                    <h3 className="font-display flex items-center gap-2 text-4xl font-extrabold tracking-tight text-[#0C2A5A] sm:text-5xl">
+                      {cat.label}
+                      <Paw className="size-6 text-[#0C2A5A]/35 sm:size-7" />
+                    </h3>
+                  </div>
+                  <span className="inline-flex w-max shrink-0 items-center gap-2 rounded-full bg-[#e0533f] px-5 py-2.5 text-sm font-bold text-white shadow-[0_10px_22px_rgba(224,83,63,0.3)] transition-transform duration-300 ease-out group-hover:-translate-y-0.5 sm:px-6 sm:py-3">
+                    {cat.cta}
+                    <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+                  </span>
+                </div>
               </div>
             </Link>
           ))}
@@ -131,7 +152,7 @@ export default async function HomePage() {
               Onze favorieten van dit moment
             </p>
           </div>
-          <ProductGrid products={featured} variant="polaroid" />
+          <ProductGrid products={featured} variant="featured" />
           <div className="mt-8 text-center">
             <Link
               href="/producten"

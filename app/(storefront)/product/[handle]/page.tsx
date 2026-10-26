@@ -70,7 +70,9 @@ export default async function ProductPage({
         ? [product.featuredImage]
         : [];
 
-  const cat = product.productType ? productCategory(product.productType) : null;
+  const cat = product.productType
+    ? productCategory(product.productType, product.title)
+    : null;
   const dierLabel = dier === "hond" ? "Honden" : dier === "kat" ? "Katten" : null;
   const dierHref = dier ? `/producten?category=${dier}` : "/producten";
   const catHref = cat

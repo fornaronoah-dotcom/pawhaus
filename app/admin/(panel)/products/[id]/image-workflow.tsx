@@ -1,68 +1,72 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element */
-import { useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { generatePrompts } from "@/lib/admin/image-prompt";
 import type { AdminMedia } from "@/lib/admin-products";
 import type { DraftMeta } from "@/lib/admin/media-review";
 import {
-  markSentToFlowAction,
-  unmarkSentToFlowAction,
   publishDraftAction,
   discardDraftAction,
+  autoImproveImageAction,
 } from "@/lib/admin-image-actions";
 
-const FLOW_URL = "https://labs.google/fx/nl/tools/flow";
+const AI_OPS = [
+  { key: "background", label: "Achtergrond weg" },
+  { key: "upscale", label: "Scherper" },
+  { key: "productshot", label: "Productfoto" },
+] as const;
 
 type Props = {
   numericId: string;
   shopifyProductGid: string;
-  title: string;
-  productType: string;
-  tags: string[];
   media: AdminMedia[];
-  flowSent: string[];
   drafts: DraftMeta[];
+  imageAiEnabled: boolean;
 };
 
 export function ImageWorkflow(props: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [uploading, setUploading] = useState(false);
-  const [basedOn, setBasedOn] = useState<string>(""); // index van origineel
+  const [basedOn, setBasedOn] = useState<string>("");
+  const [showManual, setShowManual] = useState(false);
+  const [lightbox, setLightbox] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const prompts = useMemo(
-    () =>
-      generatePrompts({
-        title: props.title,
-        productType: props.productType,
-        tags: props.tags,
-      }),
-    [props.title, props.productType, props.tags],
-  );
-  const flowSentSet = useMemo(() => new Set(props.flowSent), [props.flowSent]);
+  // Esc sluit de vergrootweergave.
+  useEffect(() => {
+    if (!lightbox) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightbox(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lightbox]);
 
-  function copy(text: string) {
-    navigator.clipboard.writeText(text).then(
-      () => toast.success("Prompt gekopieerd"),
-      () => toast.error("Kopiëren mislukt"),
-    );
-  }
-
-  function toggleFlow(m: AdminMedia) {
+  function aiImprove(m: AdminMedia, op: "background" | "upscale" | "productshot") {
     startTransition(async () => {
-      if (flowSentSet.has(m.id)) {
-        await unmarkSentToFlowAction(m.id, props.numericId);
+      const t = toast.loading(
+        op === "productshot"
+          ? "AI maakt een productfoto… (±20s)"
+          : "AI verbetert de foto…",
+      );
+      const r = await autoImproveImageAction({
+        numericId: props.numericId,
+        shopifyProductGid: props.shopifyProductGid,
+        originalMediaId: m.id,
+        originalUrl: m.url,
+        op,
+      });
+      if (r.ok) {
+        toast.success("Klaar — bekijk het resultaat bij 'In review'", { id: t });
+        router.refresh();
       } else {
-        await markSentToFlowAction(props.shopifyProductGid, m.id, props.numericId);
-        toast.success("Gemarkeerd als naar Google Flow");
+        toast.error(r.error ?? "AI-verbetering mislukt", { id: t });
       }
-      router.refresh();
     });
   }
 
@@ -104,11 +108,10 @@ export function ImageWorkflow(props: Props) {
       const r = await publishDraftAction(draftId, asMain);
       if (r.ok) {
         toast.success(asMain ? "Ingesteld als hoofdafbeelding" : "Toegevoegd als extra afbeelding");
-        router.refresh();
       } else {
         toast.error(r.error ?? "Publiceren mislukt");
-        router.refresh();
       }
+      router.refresh();
     });
   }
 
@@ -125,92 +128,78 @@ export function ImageWorkflow(props: Props) {
 
   return (
     <div className="flex flex-col gap-8">
-      {/* 1. AI-prompts + Flow openen */}
-      <section className="flex flex-col gap-3">
+      {/* Intro */}
+      <section className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <h3 className="text-base font-medium">AI-prompts voor Google Flow</h3>
-          <a href={FLOW_URL} target="_blank" rel="noreferrer">
-            <Button size="sm">Open Google Flow ↗</Button>
-          </a>
+          <h3 className="text-base font-medium">Foto&apos;s verbeteren met AI</h3>
+          {props.imageAiEnabled ? (
+            <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+              ✨ fal.ai actief
+            </span>
+          ) : null}
         </div>
         <p className="text-muted-foreground text-sm">
-          Download een originele foto, open Google Flow, plak één van deze prompts
-          met de foto erbij, en upload het resultaat hieronder. Het product blijft
-          identiek — alleen de achtergrond verandert.
+          Kies bij een foto <strong>Achtergrond weg</strong> of <strong>Scherper</strong>.
+          De AI maakt een voorstel dat je hieronder bij <em>In review</em> ziet (oud vs
+          nieuw) en pas na jouw goedkeuring naar Shopify gaat.
         </p>
-        <div className="grid gap-3 sm:grid-cols-2">
-          {prompts.map((p) => (
-            <div key={p.key} className="flex flex-col gap-2 rounded-lg border p-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">{p.label}</span>
-                <Button size="xs" variant="outline" onClick={() => copy(p.prompt)}>
-                  Kopieer
-                </Button>
-              </div>
-              <p className="text-muted-foreground text-xs leading-relaxed">{p.prompt}</p>
-            </div>
-          ))}
-        </div>
+        {!props.imageAiEnabled ? (
+          <div className="rounded-lg border border-amber-300/60 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+            fal.ai is niet ingesteld. Voeg <code>FAL_KEY</code> toe aan je
+            omgeving en herstart de server om automatische foto&apos;s aan te zetten.
+          </div>
+        ) : null}
       </section>
 
-      {/* 2. Originele foto's */}
+      {/* Originele foto's met AI-acties */}
       <section className="flex flex-col gap-3">
         <h3 className="text-base font-medium">Originele Shopify-foto&apos;s</h3>
         {props.media.length === 0 ? (
           <p className="text-muted-foreground text-sm">Geen foto&apos;s.</p>
         ) : (
           <div className="flex flex-wrap gap-4">
-            {props.media.map((m) => {
-              const sent = flowSentSet.has(m.id);
-              return (
-                <div key={m.id} className="flex w-40 flex-col gap-2">
-                  <div className="relative">
-                    <Image src={m.url} alt={m.altText ?? ""} width={160} height={160} className="h-40 w-40 rounded-lg object-cover ring-1 ring-foreground/10" />
-                    {sent ? (
-                      <span className="absolute left-1 top-1 rounded bg-primary px-1 text-[10px] font-medium text-primary-foreground">
-                        → Flow
-                      </span>
-                    ) : null}
-                  </div>
+            {props.media.map((m) => (
+              <div key={m.id} className="flex w-40 flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={() => setLightbox(m.url)}
+                  className="cursor-zoom-in"
+                  title="Klik om groot te bekijken"
+                >
+                  <Image
+                    src={m.url}
+                    alt={m.altText ?? ""}
+                    width={160}
+                    height={160}
+                    className="ring-foreground/10 h-40 w-40 rounded-lg object-cover ring-1 transition hover:ring-primary/40"
+                  />
+                </button>
+                {props.imageAiEnabled ? (
                   <div className="flex flex-wrap gap-1">
-                    <a href={`${m.url}${m.url.includes("?") ? "&" : "?"}width=2048`} download target="_blank" rel="noreferrer">
-                      <Button size="xs" variant="outline">Download</Button>
-                    </a>
-                    <Button size="xs" variant="outline" onClick={() => copy(prompts[0].prompt)}>
-                      Kopieer prompt
-                    </Button>
+                    {AI_OPS.map((op) => (
+                      <Button
+                        key={op.key}
+                        size="xs"
+                        disabled={pending}
+                        onClick={() => aiImprove(m, op.key)}
+                        title="Maakt een voorstel dat je daarna goedkeurt"
+                      >
+                        ✨ {op.label}
+                      </Button>
+                    ))}
                   </div>
-                  <Button size="xs" variant={sent ? "secondary" : "ghost"} disabled={pending} onClick={() => toggleFlow(m)}>
-                    {sent ? "✓ naar Flow" : "Markeer naar Flow"}
-                  </Button>
-                </div>
-              );
-            })}
+                ) : (
+                  <p className="text-muted-foreground text-xs">
+                    fal.ai niet ingesteld
+                  </p>
+                )}
+              </div>
+            ))}
           </div>
         )}
       </section>
 
-      {/* 3. Resultaat uploaden */}
-      <section className="flex flex-col gap-3">
-        <h3 className="text-base font-medium">Bewerkt resultaat uploaden (draft)</h3>
-        <div className="flex flex-wrap items-center gap-2 rounded-lg border p-3">
-          <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" className="text-sm" />
-          <select value={basedOn} onChange={(e) => setBasedOn(e.target.value)} className="h-8 rounded-lg border border-input bg-transparent px-2 text-sm">
-            <option value="">Gebaseerd op… (optioneel)</option>
-            {props.media.map((m, i) => (
-              <option key={m.id} value={i}>Origineel {i + 1}</option>
-            ))}
-          </select>
-          <Button size="sm" disabled={uploading} onClick={handleUpload}>
-            {uploading ? "Uploaden…" : "Upload als draft"}
-          </Button>
-        </div>
-        <p className="text-muted-foreground text-xs">
-          Drafts worden NIET automatisch gepubliceerd. Jij keurt elke foto goed.
-        </p>
-      </section>
-
-      {/* 4. Drafts in review (oud vs nieuw) */}
+      {/* Drafts in review (oud vs nieuw) */}
       {openDrafts.length > 0 ? (
         <section className="flex flex-col gap-3">
           <h3 className="text-base font-medium">In review</h3>
@@ -219,13 +208,23 @@ export function ImageWorkflow(props: Props) {
               <div key={d.id} className="flex flex-wrap items-center gap-4 rounded-lg border p-3">
                 {d.originalUrl ? (
                   <figure className="flex flex-col items-center gap-1">
-                    <img src={d.originalUrl} alt="" className="h-28 w-28 rounded object-cover ring-1 ring-foreground/10" />
+                    <img
+                      src={d.originalUrl}
+                      alt=""
+                      onClick={() => setLightbox(d.originalUrl!)}
+                      className="ring-foreground/10 h-28 w-28 cursor-zoom-in rounded object-cover ring-1 transition hover:ring-primary/40"
+                    />
                     <figcaption className="text-muted-foreground text-[10px]">oud</figcaption>
                   </figure>
                 ) : null}
                 <span className="text-muted-foreground">→</span>
                 <figure className="flex flex-col items-center gap-1">
-                  <img src={`/api/admin/draft-image/${d.id}`} alt="" className="h-28 w-28 rounded object-cover ring-1 ring-primary/40" />
+                  <img
+                    src={`/api/admin/draft-image/${d.id}`}
+                    alt=""
+                    onClick={() => setLightbox(`/api/admin/draft-image/${d.id}`)}
+                    className="ring-primary/40 h-28 w-28 cursor-zoom-in rounded object-cover ring-1 transition hover:ring-primary"
+                  />
                   <figcaption className="text-muted-foreground text-[10px]">nieuw</figcaption>
                 </figure>
                 <div className="flex flex-1 flex-wrap items-center justify-end gap-2">
@@ -245,7 +244,7 @@ export function ImageWorkflow(props: Props) {
         </section>
       ) : null}
 
-      {/* 5. Gepubliceerde drafts (historiek) */}
+      {/* Gepubliceerd (historiek) */}
       {doneDrafts.length > 0 ? (
         <section className="flex flex-col gap-2">
           <h3 className="text-base font-medium">Gepubliceerd</h3>
@@ -258,6 +257,55 @@ export function ImageWorkflow(props: Props) {
             ))}
           </ul>
         </section>
+      ) : null}
+
+      {/* Handmatige fallback (ingeklapt) */}
+      <section className="flex flex-col gap-2 border-t pt-4">
+        <button
+          type="button"
+          onClick={() => setShowManual((v) => !v)}
+          className="text-muted-foreground hover:text-foreground self-start text-xs"
+        >
+          {showManual ? "− " : "+ "}Of upload zelf een bewerkte foto
+        </button>
+        {showManual ? (
+          <div className="flex flex-wrap items-center gap-2 rounded-lg border p-3">
+            <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" className="text-sm" />
+            <select value={basedOn} onChange={(e) => setBasedOn(e.target.value)} className="border-input h-8 rounded-lg border bg-transparent px-2 text-sm">
+              <option value="">Gebaseerd op… (optioneel)</option>
+              {props.media.map((m, i) => (
+                <option key={m.id} value={i}>Origineel {i + 1}</option>
+              ))}
+            </select>
+            <Button size="sm" disabled={uploading} onClick={handleUpload}>
+              {uploading ? "Uploaden…" : "Upload als draft"}
+            </Button>
+          </div>
+        ) : null}
+      </section>
+
+      {/* Vergrootweergave (lightbox) */}
+      {lightbox ? (
+        <div
+          onClick={() => setLightbox(null)}
+          className="fixed inset-0 z-50 flex cursor-zoom-out items-center justify-center bg-black/80 p-6"
+          role="dialog"
+          aria-modal="true"
+        >
+          <img
+            src={lightbox}
+            alt="Vergrote foto"
+            className="max-h-full max-w-full rounded-lg object-contain shadow-2xl"
+          />
+          <button
+            type="button"
+            aria-label="Sluiten"
+            onClick={() => setLightbox(null)}
+            className="absolute top-4 right-5 text-3xl leading-none text-white/80 hover:text-white"
+          >
+            ×
+          </button>
+        </div>
       ) : null}
     </div>
   );

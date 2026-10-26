@@ -6,6 +6,9 @@ import {
 } from "@/lib/admin-discounts";
 import { isAdminConfigured } from "@/lib/shopify-admin";
 import { AdminNotConfigured } from "@/components/admin/AdminNotConfigured";
+import { PageHeader } from "@/components/admin/PageHeader";
+import { Callout } from "@/components/admin/Callout";
+import { requireAccess } from "@/lib/auth/guard";
 import { formatPrice } from "@/lib/utils";
 import { CreateDiscountForm } from "./create-form";
 import { QrButton } from "./qr-button";
@@ -24,10 +27,12 @@ const STATUS: Record<string, { label: string; cls: string }> = {
 };
 
 export default async function KortingenPage() {
+  await requireAccess("/admin/kortingen");
+
   if (!isAdminConfigured) {
     return (
       <div className="flex flex-col gap-6">
-        <h1 className="text-2xl font-semibold tracking-tight">Kortingscodes</h1>
+        <PageHeader title="Kortingscodes" />
         <AdminNotConfigured />
       </div>
     );
@@ -49,54 +54,49 @@ export default async function KortingenPage() {
 
   return (
     <div className="flex max-w-4xl flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Kortingscodes</h1>
-        <p className="text-muted-foreground text-sm">
-          Maak kortingscodes aan in Shopify (Shopify blijft bron van waarheid).
-        </p>
-      </div>
+      <PageHeader
+        title="Kortingscodes"
+        description="Maak kortingscodes aan in Shopify (Shopify blijft bron van waarheid)."
+      />
 
       {scopeMissing ? (
-        <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
-          <p className="font-semibold">Eenmalige toestemming nodig: <code>write_discounts</code></p>
-          <p className="mt-1">
-            Je Shopify-token heeft nog geen rechten voor kortingen. Voeg de scope
-            toe in de Dev Dashboard-app en autoriseer opnieuw — daarna werkt deze
-            module meteen. (Vraag de assistent om je door de korte her-autorisatie
-            te loodsen.)
-          </p>
-        </div>
+        <Callout variant="warning" title={<>Eenmalige toestemming nodig: <code>write_discounts</code></>}>
+          Je Shopify-token heeft nog geen rechten voor kortingen. Voeg de scope
+          toe in de Dev Dashboard-app en autoriseer opnieuw — daarna werkt deze
+          module meteen. (Vraag de assistent om je door de korte her-autorisatie
+          te loodsen.)
+        </Callout>
       ) : null}
 
       <CreateDiscountForm />
 
       {error ? (
-        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
-          Kon kortingen niet laden: {error}
-        </div>
+        <Callout variant="error" title="Kon kortingen niet laden">
+          {error}
+        </Callout>
       ) : !scopeMissing ? (
         <div className="overflow-x-auto rounded-xl ring-1 ring-foreground/10">
           <table className="w-full border-collapse text-sm">
             <thead>
-              <tr className="border-b bg-muted/50 text-left">
-                <th className="px-3 py-2 font-medium">Code</th>
-                <th className="px-3 py-2 font-medium">Korting</th>
-                <th className="px-3 py-2 font-medium">Status</th>
-                <th className="px-3 py-2 font-medium">Gebruikt</th>
-                <th className="px-3 py-2 font-medium">Vervalt</th>
-                <th className="px-3 py-2 font-medium">QR</th>
+              <tr className="bg-muted/60 text-muted-foreground text-left text-xs uppercase tracking-wide">
+                <th className="px-3 py-2.5 font-medium">Code</th>
+                <th className="px-3 py-2.5 font-medium">Korting</th>
+                <th className="px-3 py-2.5 font-medium">Status</th>
+                <th className="px-3 py-2.5 font-medium">Gebruikt</th>
+                <th className="px-3 py-2.5 font-medium">Vervalt</th>
+                <th className="px-3 py-2.5 font-medium">QR</th>
               </tr>
             </thead>
             <tbody>
               {discounts.length === 0 ? (
-                <tr><td colSpan={6} className="text-muted-foreground px-3 py-4">Nog geen kortingscodes.</td></tr>
+                <tr><td colSpan={6} className="text-muted-foreground px-3 py-6 text-center">Nog geen kortingscodes.</td></tr>
               ) : (
                 discounts.map((d) => {
                   const s = STATUS[d.status] ?? STATUS.ACTIVE;
                   return (
-                    <tr key={d.id} className="border-b last:border-0 hover:bg-muted/40">
-                      <td className="px-3 py-2 font-medium">{d.code}</td>
-                      <td className="px-3 py-2 whitespace-nowrap">
+                    <tr key={d.id} className="hover:bg-accent/40 border-t border-border/60 transition-colors">
+                      <td className="px-3 py-2.5 font-medium tabular-nums">{d.code}</td>
+                      <td className="px-3 py-2.5 whitespace-nowrap tabular-nums">
                         {d.type === "percentage"
                           ? `${d.percentage}%`
                           : d.amount ? formatPrice(d.amount) : "—"}

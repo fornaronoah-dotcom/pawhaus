@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Productfoto-pipeline (lokale data, niet committen)
+scripts/photos/data/
+scripts/photos/.venv/

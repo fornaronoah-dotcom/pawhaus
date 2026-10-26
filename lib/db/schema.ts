@@ -15,25 +15,38 @@ import {
   boolean,
   timestamp,
   bigserial,
+  integer,
   jsonb,
   index,
   uniqueIndex,
+  check,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import type { AdminRole } from "../admin/roles";
 
-export const adminRole = pgEnum("admin_role", ["owner", "editor"]);
-
-export const adminUsers = pgTable("admin_users", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  email: text("email").notNull().unique(),
-  passwordHash: text("password_hash").notNull(),
-  name: text("name").notNull(),
-  role: adminRole("role").notNull().default("editor"),
-  isActive: boolean("is_active").notNull().default(true),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-  lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
-});
+export const adminUsers = pgTable(
+  "admin_users",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    email: text("email").notNull().unique(),
+    passwordHash: text("password_hash").notNull(),
+    name: text("name").notNull(),
+    // Rol als text + CHECK (i.p.v. pgEnum) — Postgres kan enum-waarden niet in
+    // een transactie uitbreiden, en Drizzle-migraties draaien in een transactie.
+    role: text("role").$type<AdminRole>().notNull().default("editor"),
+    isActive: boolean("is_active").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
+  },
+  (t) => [
+    check(
+      "admin_users_role_check",
+      sql`${t.role} in ('owner','admin','marketing','content','editor')`,
+    ),
+  ],
+);
 
 export const sessions = pgTable("sessions", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -221,6 +234,51 @@ export const giveawayEntries = pgTable(
   },
   (t) => [uniqueIndex("giveaway_entry_unique").on(t.giveawayId, t.email)],
 );
+
+/**
+ * Content-banners (eigen Postgres-data) voor de storefront-announcementbalk.
+ * De storefront toont de actieve banner met de hoogste sorteervolgorde.
+ */
+export const contentBanners = pgTable("content_banners", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  title: text("title").notNull(),
+  body: text("body"),
+  linkUrl: text("link_url"),
+  active: boolean("active").notNull().default(false),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export type ContentBanner = typeof contentBanners.$inferSelect;
+
+/**
+ * Favorieten van klanten (eigen Postgres-data). Gekoppeld aan het Shopify
+ * customer-id uit de Customer Account API. Shopify slaat geen verlanglijst op,
+ * dus dit is de bron van waarheid voor favorieten. Gasten bewaren favorieten in
+ * localStorage; bij inloggen worden die naar deze tabel ge-merged.
+ */
+export const customerFavorites = pgTable(
+  "customer_favorites",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    customerId: text("customer_id").notNull(),
+    productHandle: text("product_handle").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("customer_favorites_unique").on(t.customerId, t.productHandle),
+    index("customer_favorites_customer_idx").on(t.customerId),
+  ],
+);
+
+export type CustomerFavorite = typeof customerFavorites.$inferSelect;
 
 export type AdminUser = typeof adminUsers.$inferSelect;
 export type NewAdminUser = typeof adminUsers.$inferInsert;
