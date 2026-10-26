@@ -17,10 +17,10 @@ export function NewsletterSection() {
           alt="Hond en kat met speelgoed"
           width={2203}
           height={1381}
-          className="h-auto w-52 shrink-0 sm:w-60 lg:w-72"
+          className="h-auto w-44 shrink-0 sm:w-60 lg:w-72"
         />
         <div className="flex-1">
-          <h2 className="flex items-center justify-center gap-2 text-3xl font-bold tracking-tight text-[#0C2A5A] lg:justify-start lg:text-4xl">
+          <h2 className="flex items-center justify-center gap-2 text-[1.7rem] font-bold tracking-tight text-[#0C2A5A] sm:text-3xl lg:justify-start lg:text-4xl">
             Blijf op de hoogte!
             <Image
               src="/images/heart.png"

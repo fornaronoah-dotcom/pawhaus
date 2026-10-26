@@ -75,7 +75,7 @@ export function CartDrawer() {
                         <Link
                           href={`/product/${line.merchandise.product.handle}`}
                           onClick={closeCart}
-                          className="text-sm font-medium hover:underline"
+                          className="line-clamp-2 text-sm font-medium hover:underline"
                         >
                           {line.merchandise.product.title}
                         </Link>
@@ -83,7 +83,7 @@ export function CartDrawer() {
                           type="button"
                           aria-label="Verwijderen"
                           onClick={() => removeItem(line.id)}
-                          className="text-muted-foreground hover:text-destructive shrink-0 transition-colors"
+                          className="text-muted-foreground hover:text-destructive -m-2 grid size-9 shrink-0 place-items-center transition-colors"
                         >
                           <Trash2 className="size-4" />
                         </button>
@@ -109,7 +109,7 @@ export function CartDrawer() {
               })}
             </ul>
 
-            <SheetFooter className="border-t">
+            <SheetFooter className="border-t pb-[max(1rem,env(safe-area-inset-bottom))]">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Subtotaal</span>
                 <span className="text-base font-medium">

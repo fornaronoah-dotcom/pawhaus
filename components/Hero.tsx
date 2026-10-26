@@ -34,7 +34,7 @@ const FEATURES: {
     title: "Gratis verzending",
     sub: (
       <>
-        Vanaf <span className="text-[#e0533f]">€70</span>
+        Vanaf <span className="text-[#e0533f]">€75</span>
       </>
     ),
   },
@@ -45,7 +45,9 @@ const FEATURES: {
 
 export function Hero() {
   return (
-    <section className="relative bg-[#c5e1e4]">
+    <section className="relative flex flex-col bg-[#c5e1e4] lg:block">
+      {/* Mobiel/tablet: vaste hoogte, rechts uitgelijnd zodat de dieren in
+          beeld blijven. Desktop: volledige foto met de tekst eroverheen. */}
       <Image
         src="/images/hero-pets.jpg"
         alt="Een Maine Coon kat, Siamese kitten en golden retriever puppy spelen met speelgoed"
@@ -53,18 +55,18 @@ export function Hero() {
         height={1536}
         priority
         sizes="100vw"
-        className="h-auto w-full"
+        className="h-72 w-full object-cover object-right sm:h-[26rem] lg:h-auto lg:object-center"
       />
 
-      {/* Logo + tagline links over de blauwe ruimte */}
-      <div className="absolute top-24 left-10 z-10 sm:left-16 lg:top-36 lg:left-[14%]">
+      {/* Logo + tagline: boven de foto op mobiel, links over de blauwe ruimte op desktop */}
+      <div className="relative z-10 order-first px-6 pt-28 sm:px-10 sm:pt-32 lg:absolute lg:top-36 lg:left-[14%] lg:order-none lg:p-0">
         <Image
           src="/images/logo.png"
           alt="Pawhaus"
           width={468}
           height={85}
           priority
-          className="h-auto w-56 sm:w-80 lg:w-[34rem]"
+          className="h-auto w-60 sm:w-80 lg:w-[34rem]"
         />
 
         <p className="font-display mt-3 flex items-center gap-2 text-xl font-extrabold tracking-tight text-[#0C2A5A] sm:text-2xl lg:mt-4 lg:text-[2rem]">
@@ -78,13 +80,12 @@ export function Hero() {
           />
         </p>
 
-        <p className="mt-4 max-w-[34rem] text-base leading-relaxed font-medium text-[#243B63] sm:text-lg lg:mt-5 lg:text-xl">
+        <p className="mt-3 max-w-[34rem] text-base leading-relaxed font-medium text-[#243B63] sm:mt-4 sm:text-lg lg:mt-5 lg:text-xl">
           De leukste producten voor honden &amp; katten,
-          <br />
-          met liefde gekozen.
+          <br className="hidden sm:inline" /> met liefde gekozen.
         </p>
 
-        <div className="relative mt-7 inline-block lg:mt-8">
+        <div className="relative mt-6 inline-block lg:mt-8">
           <Link
             href="/producten"
             className="inline-flex items-center gap-2.5 rounded-full bg-[#e0533f] px-7 py-3 text-base font-bold text-white shadow-[0_12px_24px_rgba(224,83,63,0.35)] transition-transform duration-200 hover:-translate-y-0.5 lg:px-8 lg:py-3.5 lg:text-lg"
@@ -108,6 +109,19 @@ export function Hero() {
             </p>
           </div>
         </div>
+
+        {/* Compacte vertrouwenssignalen (mobiel/tablet) */}
+        <ul className="mt-6 flex flex-wrap gap-2 lg:hidden">
+          {FEATURES.slice(0, 3).map((f) => (
+            <li
+              key={f.title}
+              className="flex items-center gap-1.5 rounded-full bg-white/70 px-3 py-1.5 text-xs font-semibold text-[#0C2A5A]"
+            >
+              <f.Icon className="size-3.5" strokeWidth={1.8} />
+              {f.title}
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* Kortingbadge rechtsboven */}

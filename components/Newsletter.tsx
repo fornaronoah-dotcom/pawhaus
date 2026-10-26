@@ -55,12 +55,12 @@ export function Newsletter({ className }: { className?: string }) {
         required
         placeholder="Jouw e-mailadres"
         aria-label="E-mailadres"
-        className="min-w-0 flex-1 bg-transparent px-5 text-sm text-[#0C2A5A] outline-none placeholder:text-[#0C2A5A]/40"
+        className="w-0 min-w-0 flex-1 bg-transparent px-4 text-sm sm:px-5 text-[#0C2A5A] outline-none placeholder:text-[#0C2A5A]/40"
       />
       <button
         type="submit"
         disabled={pending}
-        className="flex shrink-0 items-center gap-2 rounded-full bg-[#e0533f] px-6 py-3 text-sm font-bold text-white transition-transform duration-200 hover:-translate-y-0.5 disabled:opacity-60"
+        className="flex shrink-0 items-center gap-2 rounded-full bg-[#e0533f] px-5 py-3 text-sm font-bold text-white sm:px-6 transition-transform duration-200 hover:-translate-y-0.5 disabled:opacity-60"
       >
         {pending ? "Bezig…" : "Aanmelden"}
         <PawMini className="size-4" />

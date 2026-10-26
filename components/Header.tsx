@@ -57,7 +57,7 @@ export function Header({
           variant="ghost"
           size="icon"
           aria-label="Menu openen"
-          className="md:hidden"
+          className="lg:hidden"
           onClick={() => setMobileOpen(true)}
         >
           <Menu className="size-5" />
@@ -80,7 +80,7 @@ export function Header({
         </Link>
 
         {/* Desktop navigatie */}
-        <nav className="ml-6 hidden shrink-0 items-center gap-8 md:flex">
+        <nav className="ml-6 hidden shrink-0 items-center gap-8 lg:flex">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
@@ -93,7 +93,7 @@ export function Header({
         </nav>
 
         {/* Zoekbalk verschijnt inline na klikken op het vergrootglas */}
-        <div className="hidden min-w-0 flex-1 justify-center md:flex">
+        <div className="hidden min-w-0 flex-1 justify-center lg:flex">
           {searchOpen && (
             <Suspense fallback={null}>
               <SearchBar autoFocus className="w-full max-w-sm" />
@@ -109,7 +109,7 @@ export function Header({
             aria-label={searchOpen ? "Zoeken sluiten" : "Zoeken"}
             aria-expanded={searchOpen}
             onClick={() => setSearchOpen((v) => !v)}
-            className="hidden md:inline-flex"
+            className="hidden lg:inline-flex"
           >
             {searchOpen ? <X className="size-5" /> : <Search className="size-5" />}
           </Button>
@@ -157,7 +157,12 @@ export function Header({
 
       {/* Mobiel menu-paneel */}
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <SheetContent side="left" className="w-72">
+        <SheetContent
+          side="left"
+          className="w-72"
+          // Bij touch niet het zoekveld focussen: dat opent meteen het toetsenbord.
+          initialFocus={(type) => type !== "touch"}
+        >
           <SheetHeader>
             <SheetTitle>
               <Image

@@ -89,9 +89,9 @@ export default async function ProductPage({
 
   return (
     <>
-    <div className="mx-auto max-w-7xl px-4 pt-36 pb-20 sm:px-6 lg:px-8 lg:pb-24">
+    <div className="mx-auto max-w-7xl px-4 pt-24 pb-16 sm:px-6 sm:pt-32 lg:px-8 lg:pt-36 lg:pb-24">
       {/* Kruimelpad */}
-      <nav className="text-muted-foreground mb-8 flex flex-wrap items-center gap-1 text-sm">
+      <nav className="text-muted-foreground mb-4 flex flex-wrap items-center gap-1 text-xs sm:mb-8 sm:text-sm">
         <Link href="/" className="hover:text-foreground">
           Home
         </Link>
@@ -107,11 +107,12 @@ export default async function ProductPage({
             </Link>
           </>
         )}
-        <ChevronRight className="size-3.5" />
-        <span className="text-foreground">{product.title}</span>
+        {/* Producttitel staat al in de h1; op mobiel niet herhalen */}
+        <ChevronRight className="hidden size-3.5 sm:block" />
+        <span className="text-foreground hidden sm:inline">{product.title}</span>
       </nav>
 
-      <div className="space-y-20">
+      <div className="space-y-12 sm:space-y-16 lg:space-y-20">
         {/* Hero */}
         <ProductView product={product} images={images} />
 
@@ -130,7 +131,7 @@ export default async function ProductPage({
         />
 
         {/* Carrousels */}
-        <div className="space-y-14">
+        <div className="space-y-10 sm:space-y-14">
           {/* Vaak samen gekocht */}
           <BoughtTogether products={crossSell} />
 

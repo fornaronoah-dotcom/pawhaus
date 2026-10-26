@@ -8,7 +8,7 @@ const ITEMS: { icon: LucideIcon; title: string; sub: string }[] = [
   { icon: PawPrint, title: "10.000+ tevreden klanten", sub: "Baasjes & hun lievelingen" },
   { icon: Truck, title: "Snelle levering", sub: "Vandaag besteld, snel in huis" },
   { icon: ShieldCheck, title: "Veilig betalen", sub: "Met al je favoriete methodes" },
-  { icon: RotateCcw, title: "30 dagen retour", sub: "Niet goed? Geld terug" },
+  { icon: RotateCcw, title: "14 dagen retour", sub: "Niet goed? Geld terug" },
 ];
 
 export function TrustBlock() {

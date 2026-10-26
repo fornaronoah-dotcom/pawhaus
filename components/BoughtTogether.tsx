@@ -27,14 +27,14 @@ export function BoughtTogether({
 
   return (
     <section>
-      <div className="mb-6 flex items-end justify-between gap-4">
-        <h2 className="font-poppins text-2xl font-semibold tracking-tight sm:text-3xl">
+      <div className="mb-4 flex items-end justify-between gap-4 sm:mb-6">
+        <h2 className="font-poppins text-xl font-semibold tracking-tight sm:text-3xl">
           {title}
         </h2>
         <div className="flex items-center gap-2">
           <Link
             href="/producten"
-            className="text-primary mr-2 text-sm font-medium hover:underline"
+            className="text-primary shrink-0 text-sm font-medium hover:underline sm:mr-2"
           >
             Bekijk alles
           </Link>
@@ -42,7 +42,7 @@ export function BoughtTogether({
             type="button"
             onClick={() => scroll(-1)}
             aria-label="Vorige"
-            className="border-border hover:border-primary/50 grid size-9 place-items-center rounded-full border transition hover:-translate-y-0.5"
+            className="border-border hover:border-primary/50 hidden size-9 place-items-center rounded-full border transition hover:-translate-y-0.5 sm:grid"
           >
             <ChevronLeft className="size-4" />
           </button>
@@ -50,7 +50,7 @@ export function BoughtTogether({
             type="button"
             onClick={() => scroll(1)}
             aria-label="Volgende"
-            className="border-border hover:border-primary/50 grid size-9 place-items-center rounded-full border transition hover:-translate-y-0.5"
+            className="border-border hover:border-primary/50 hidden size-9 place-items-center rounded-full border transition hover:-translate-y-0.5 sm:grid"
           >
             <ChevronRight className="size-4" />
           </button>
@@ -59,7 +59,7 @@ export function BoughtTogether({
 
       <div
         ref={scroller}
-        className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:scroll-px-0 sm:gap-4 sm:px-0 [&::-webkit-scrollbar]:hidden"
       >
         {bundleHint && (
           <div className="from-primary/10 to-accent/60 flex w-56 shrink-0 snap-start flex-col justify-center rounded-2xl bg-gradient-to-br p-5 ring-1 ring-black/5">
@@ -75,7 +75,7 @@ export function BoughtTogether({
           </div>
         )}
         {products.map((p, i) => (
-          <div key={p.handle} className="w-44 shrink-0 snap-start sm:w-56">
+          <div key={p.handle} className="w-[42vw] max-w-56 shrink-0 snap-start sm:w-56">
             <ProductCard product={p} index={i} />
           </div>
         ))}

@@ -169,6 +169,7 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
   }
 
   /* Plus Jakarta Sans voor display-koppen */
@@ -194,5 +195,24 @@
   }
   50% {
     transform: translateY(-10px);
+  }
+}
+
+/*
+ * Mobiel: iOS Safari zoomt in op velden met een font-size < 16px. Bewust
+ * buiten @layer zodat dit de text-sm utilities op inputs overstemt.
+ */
+@media (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* Ruimte onder de footer zodat de mobiele koopbalk (PDP) niets afdekt. */
+@media (max-width: 1023px) {
+  body:has([data-sticky-buybar]) {
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
   }
 }

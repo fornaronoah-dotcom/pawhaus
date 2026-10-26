@@ -24,16 +24,16 @@ export function CartView() {
   }
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[1.6fr_1fr]">
+    <div className="grid gap-6 sm:gap-10 lg:grid-cols-[1.6fr_1fr]">
       {/* Regels */}
       <ul className="divide-y">
         {cart.lines.map((line) => {
           const image = line.merchandise.product.featuredImage;
           return (
-            <li key={line.id} className="flex gap-4 py-6">
+            <li key={line.id} className="flex gap-3 py-5 sm:gap-4 sm:py-6">
               <Link
                 href={`/product/${line.merchandise.product.handle}`}
-                className="bg-muted relative size-24 shrink-0 overflow-hidden rounded-lg sm:size-28"
+                className="bg-muted relative size-20 shrink-0 overflow-hidden rounded-lg sm:size-28"
               >
                 {image && (
                   <Image
@@ -49,10 +49,10 @@ export function CartView() {
 
               <div className="flex flex-1 flex-col">
                 <div className="flex justify-between gap-3">
-                  <div>
+                  <div className="min-w-0">
                     <Link
                       href={`/product/${line.merchandise.product.handle}`}
-                      className="font-medium hover:underline"
+                      className="line-clamp-2 text-sm font-medium hover:underline sm:text-base"
                     >
                       {line.merchandise.product.title}
                     </Link>
@@ -62,12 +62,12 @@ export function CartView() {
                       </p>
                     )}
                   </div>
-                  <span className="font-medium">
+                  <span className="shrink-0 text-sm font-medium sm:text-base">
                     {formatPrice(line.cost.totalAmount)}
                   </span>
                 </div>
 
-                <div className="mt-auto flex items-center justify-between pt-4">
+                <div className="mt-auto flex items-center justify-between pt-3 sm:pt-4">
                   <QuantitySelector
                     value={line.quantity}
                     onChange={(q) => updateItem(line.id, q)}
@@ -76,9 +76,11 @@ export function CartView() {
                   <button
                     type="button"
                     onClick={() => removeItem(line.id)}
-                    className="text-muted-foreground hover:text-destructive flex items-center gap-1.5 text-sm transition-colors"
+                    aria-label="Verwijderen"
+                    className="text-muted-foreground -mr-2 p-2 sm:mr-0 sm:p-0 hover:text-destructive flex items-center gap-1.5 text-sm transition-colors"
                   >
-                    <Trash2 className="size-4" /> Verwijderen
+                    <Trash2 className="size-4" />
+                    <span className="hidden sm:inline">Verwijderen</span>
                   </button>
                 </div>
               </div>
@@ -88,7 +90,7 @@ export function CartView() {
       </ul>
 
       {/* Samenvatting */}
-      <aside className="h-fit rounded-2xl border p-6 lg:sticky lg:top-24">
+      <aside className="h-fit rounded-2xl border p-5 sm:p-6 lg:sticky lg:top-24">
         <h2 className="text-lg font-medium">Overzicht</h2>
         <Separator className="my-4" />
         <dl className="space-y-3 text-sm">

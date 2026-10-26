@@ -148,9 +148,9 @@ export function ProductTabs({
                   <li className="flex gap-3">
                     <Truck className="text-primary mt-0.5 size-5 shrink-0" />
                     <span>
-                      <span className="font-medium">Gratis verzending vanaf € 50.</span>{" "}
+                      <span className="font-medium">Gratis verzending vanaf € 75.</span>{" "}
                       <span className="text-muted-foreground">
-                        Onder € 50 reken je een vaste bijdrage af.
+                        Onder € 75 reken je een vaste bijdrage af.
                       </span>
                     </span>
                   </li>
@@ -166,7 +166,7 @@ export function ProductTabs({
                   <li className="flex gap-3">
                     <RotateCcw className="text-primary mt-0.5 size-5 shrink-0" />
                     <span>
-                      <span className="font-medium">30 dagen retourrecht.</span>{" "}
+                      <span className="font-medium">14 dagen retourrecht.</span>{" "}
                       <span className="text-muted-foreground">
                         Niet tevreden? Stuur eenvoudig terug.
                       </span>

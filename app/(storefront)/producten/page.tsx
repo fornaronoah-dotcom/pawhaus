@@ -54,13 +54,14 @@ export default async function ProductenPage({
         count={products.length}
       />
 
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         {/* Bovenbalk: dier/subcategorie-chips + sorteren (+ mobiele filterknop) */}
-        <div className="mb-6 flex items-start gap-3">
-          <MobileFilters facets={facets} />
-          <div className="min-w-0 flex-1">
-            <ProductFilters activeCategory={category} activeSort={sort} />
-          </div>
+        <div className="mb-5 sm:mb-6">
+          <ProductFilters
+            activeCategory={category}
+            activeSort={sort}
+            leading={<MobileFilters facets={facets} />}
+          />
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[250px_1fr]">

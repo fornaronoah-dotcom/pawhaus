@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Baloo_2, Caveat, Inter, Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -55,6 +55,14 @@ export const metadata: Metadata = {
     locale: "nl_BE",
     siteName: "Pawhaus",
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  // Laat env(safe-area-inset-*) werken op toestellen met een notch/home-balk.
+  viewportFit: "cover",
+  themeColor: "#c5e1e4",
 };
 
 export default function RootLayout({

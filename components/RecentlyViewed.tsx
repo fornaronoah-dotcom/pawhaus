@@ -47,8 +47,8 @@ export function RecentlyViewed({ current }: { current: RecentItem }) {
 
   return (
     <section>
-      <div className="mb-6 flex items-end justify-between gap-4">
-        <h2 className="font-poppins text-2xl font-semibold tracking-tight sm:text-3xl">
+      <div className="mb-4 flex items-end justify-between gap-4 sm:mb-6">
+        <h2 className="font-poppins text-xl font-semibold tracking-tight sm:text-3xl">
           Recent bekeken
         </h2>
         <div className="flex items-center gap-2">
@@ -56,7 +56,7 @@ export function RecentlyViewed({ current }: { current: RecentItem }) {
             type="button"
             onClick={() => scroll(-1)}
             aria-label="Vorige"
-            className="border-border hover:border-primary/50 grid size-9 place-items-center rounded-full border transition hover:-translate-y-0.5"
+            className="border-border hover:border-primary/50 hidden size-9 place-items-center rounded-full border transition hover:-translate-y-0.5 sm:grid"
           >
             <ChevronLeft className="size-4" />
           </button>
@@ -64,7 +64,7 @@ export function RecentlyViewed({ current }: { current: RecentItem }) {
             type="button"
             onClick={() => scroll(1)}
             aria-label="Volgende"
-            className="border-border hover:border-primary/50 grid size-9 place-items-center rounded-full border transition hover:-translate-y-0.5"
+            className="border-border hover:border-primary/50 hidden size-9 place-items-center rounded-full border transition hover:-translate-y-0.5 sm:grid"
           >
             <ChevronRight className="size-4" />
           </button>
@@ -73,13 +73,13 @@ export function RecentlyViewed({ current }: { current: RecentItem }) {
 
       <div
         ref={scroller}
-        className="flex snap-x gap-4 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="-mx-4 flex snap-x scroll-px-4 gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:scroll-px-0 sm:gap-4 sm:px-0 [&::-webkit-scrollbar]:hidden"
       >
         {items.map((p) => (
           <Link
             key={p.handle}
             href={`/product/${p.handle}`}
-            className="group w-40 shrink-0 snap-start sm:w-48"
+            className="group w-[36vw] max-w-48 shrink-0 snap-start sm:w-48"
           >
             <div className="bg-secondary/30 relative aspect-square overflow-hidden rounded-2xl ring-1 ring-black/5">
               {p.image ? (

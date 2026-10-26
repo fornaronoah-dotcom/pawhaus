@@ -15,7 +15,7 @@ export function ContentPage({
   updated?: string;
 }) {
   return (
-    <article className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
+    <article className="mx-auto max-w-2xl px-4 pt-28 pb-16 sm:px-6 lg:px-8">
       <div className="text-center">
         <h1 className="text-4xl font-semibold tracking-tight">{title}</h1>
         {updated && (

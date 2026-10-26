@@ -44,17 +44,20 @@ export async function Bundles() {
     }),
   );
 
+  // Geen enkele bundel met bestaande producten → geen lege kop tonen.
+  if (bundles.every((b) => b.products.length === 0)) return null;
+
   return (
-    <div className="mt-16 border-t border-[#0C2A5A]/10 pt-12">
-      <div className="mx-auto mb-8 max-w-2xl text-center">
-        <h2 className="text-4xl font-bold tracking-tight">Voordeelbundels</h2>
+    <div className="mt-12 border-t border-[#0C2A5A]/10 pt-10 sm:mt-16 sm:pt-12">
+      <div className="mx-auto mb-6 max-w-2xl text-center sm:mb-8">
+        <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Voordeelbundels</h2>
         <p className="text-muted-foreground mt-1 text-sm">
           Slim samengesteld — samen{" "}
           <span className="font-semibold text-[#e0533f]">15% goedkoper</span>
         </p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
         {bundles.map((bundle) => {
           if (bundle.products.length === 0) return null;
           const currency =
@@ -86,10 +89,10 @@ export async function Bundles() {
               <p className="text-muted-foreground text-sm">{bundle.tagline}</p>
 
               {/* Productfoto's met + ertussen */}
-              <div className="my-5 flex items-center justify-center gap-2">
+              <div className="my-5 flex items-center justify-center gap-1.5 sm:gap-2">
                 {bundle.products.map((p, i) => (
                   <Fragment key={p.id}>
-                    <div className="bg-muted relative size-20 shrink-0 overflow-hidden rounded-xl ring-1 ring-black/5">
+                    <div className="bg-muted relative size-16 shrink-0 sm:size-20 overflow-hidden rounded-xl ring-1 ring-black/5">
                       {p.featuredImage && (
                         <Image
                           src={p.featuredImage.url}

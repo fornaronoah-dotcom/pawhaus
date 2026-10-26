@@ -22,7 +22,7 @@ export function ProductView({
 
   return (
     <>
-      <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
+      <div className="grid gap-6 sm:gap-10 lg:grid-cols-2 lg:gap-16">
         <ProductGallery images={images} title={product.title} activeUrl={variant?.image?.url ?? null} />
         <ProductInfo product={product} onVariantChange={handleVariant} />
       </div>

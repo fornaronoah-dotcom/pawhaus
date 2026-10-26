@@ -8,12 +8,12 @@ const BENEFITS: { icon: LucideIcon; title: string; sub: string }[] = [
   { icon: Heart, title: "Met liefde gekozen", sub: "Voor jouw lieveling" },
   { icon: Sparkles, title: "Topkwaliteit", sub: "Zorgvuldig geselecteerd" },
   { icon: Truck, title: "Snel in huis", sub: "Vandaag verzonden" },
-  { icon: RotateCcw, title: "30 dagen retour", sub: "Niet goed? Geld terug" },
+  { icon: RotateCcw, title: "14 dagen retour", sub: "Niet goed? Geld terug" },
 ];
 
 export function QuickBenefits() {
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-x-3 gap-y-6 sm:gap-4 lg:grid-cols-4">
       {BENEFITS.map((c, i) => {
         const Icon = c.icon;
         return (

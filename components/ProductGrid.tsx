@@ -16,8 +16,8 @@ export function ProductGrid({
       className={cn(
         "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4",
         variant === "featured"
-          ? "gap-x-5 gap-y-8 sm:gap-x-6"
-          : "gap-x-4 gap-y-8",
+          ? "gap-x-3 gap-y-3 sm:gap-x-6 sm:gap-y-8"
+          : "gap-x-3 gap-y-3 sm:gap-x-4 sm:gap-y-8",
         className,
       )}
     >

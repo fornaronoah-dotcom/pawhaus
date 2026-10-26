@@ -22,13 +22,13 @@ export default function VerzendingRetourPage() {
         {
           heading: "Verzendkosten",
           paragraphs: [
-            "Verzending is gratis vanaf € 50. Onder dit bedrag rekenen we een vaste bijdrage die je tijdens het afrekenen ziet.",
+            "Verzending is gratis vanaf € 75. Onder dit bedrag rekenen we een vaste bijdrage die je tijdens het afrekenen ziet.",
           ],
         },
         {
           heading: "Retourneren",
           paragraphs: [
-            "Niet tevreden? Je kunt artikelen tot 30 dagen na ontvangst retourneren, mits ongebruikt en in de originele verpakking.",
+            "Niet tevreden? Je kunt artikelen tot 14 dagen na ontvangst retourneren, mits ongebruikt en in de originele verpakking.",
             "Neem contact met ons op via de contactpagina om een retour aan te melden. Na ontvangst en controle storten we het aankoopbedrag terug.",
           ],
         },

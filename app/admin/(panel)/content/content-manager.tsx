@@ -57,7 +57,7 @@ export function ContentManager({ banners }: { banners: BannerRow[] }) {
       <form action={formAction} className="grid gap-3 rounded-xl border bg-card p-4 sm:grid-cols-2">
         <div className="flex flex-col gap-1.5 sm:col-span-2">
           <label className="text-sm font-medium">Titel</label>
-          <Input name="title" required placeholder="Gratis verzending vanaf € 50" />
+          <Input name="title" required placeholder="Gratis verzending vanaf € 75" />
         </div>
         <div className="flex flex-col gap-1.5 sm:col-span-2">
           <label className="text-sm font-medium">Tekst (optioneel)</label>

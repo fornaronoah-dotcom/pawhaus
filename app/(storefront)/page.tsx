@@ -32,7 +32,7 @@ const WHY = [
     icon: Truck,
     color: "#0C2A5A",
     title: "Snel bij jou thuis",
-    text: "Bestel op werkdagen vóór 17:00 en ontvang je pakket snel in huis.",
+    text: "Bestel op werkdagen vóór 15:00 en ontvang je pakket snel in huis.",
   },
 ];
 
@@ -77,9 +77,9 @@ export default async function HomePage() {
             backgroundSize: "78px",
           }}
         />
-        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto mb-8 max-w-2xl text-center">
-          <h2 className="text-4xl font-bold tracking-tight">Shop per dier</h2>
+        <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+        <div className="mx-auto mb-6 max-w-2xl text-center sm:mb-8">
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Shop per dier</h2>
           <p className="text-muted-foreground mt-1 text-sm">
             Vind alles voor jouw hond of kat
           </p>
@@ -89,7 +89,7 @@ export default async function HomePage() {
             <Link
               key={cat.href}
               href={cat.href}
-              className="group ring-foreground/5 relative block aspect-[16/10] overflow-hidden rounded-[28px] ring-1 transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-[0_22px_45px_rgba(12,42,90,0.25)]"
+              className="group ring-foreground/5 relative block aspect-[4/3] overflow-hidden rounded-[24px] sm:aspect-[16/10] sm:rounded-[28px] ring-1 transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-[0_22px_45px_rgba(12,42,90,0.25)]"
               style={{ backgroundColor: cat.bg }}
             >
               {/* Volledige foto — dier gecentreerd, achtergrond gelijk aan de kaartkleur */}
@@ -102,10 +102,10 @@ export default async function HomePage() {
               />
 
               {/* Tekst linksonder, CTA rechtsonder */}
-              <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-8 lg:p-10">
-                <div className="flex items-end justify-between gap-4">
+              <div className="absolute inset-0 flex flex-col justify-end p-5 sm:p-8 lg:p-10">
+                <div className="flex items-end justify-between gap-3 sm:gap-4">
                   <div>
-                    <p className="font-display flex items-center gap-2 text-2xl font-medium text-[#0C2A5A] sm:text-3xl">
+                    <p className="font-display flex items-center gap-2 text-xl font-medium text-[#0C2A5A] sm:text-3xl">
                       Voor
                       <Image
                         src="/images/heart.png"
@@ -115,13 +115,17 @@ export default async function HomePage() {
                         className="h-[0.7em] w-auto"
                       />
                     </p>
-                    <h3 className="font-display flex items-center gap-2 text-4xl font-extrabold tracking-tight text-[#0C2A5A] sm:text-5xl">
+                    <h3 className="font-display flex items-center gap-2 text-[2rem] leading-none font-extrabold tracking-tight text-[#0C2A5A] sm:text-5xl sm:leading-tight">
                       {cat.label}
                       <Paw className="size-6 text-[#0C2A5A]/35 sm:size-7" />
                     </h3>
                   </div>
-                  <span className="inline-flex w-max shrink-0 items-center gap-2 rounded-full bg-[#e0533f] px-5 py-2.5 text-sm font-bold text-white shadow-[0_10px_22px_rgba(224,83,63,0.3)] transition-transform duration-300 ease-out group-hover:-translate-y-0.5 sm:px-6 sm:py-3">
-                    {cat.cta}
+                  <span
+                    aria-hidden
+                    className="inline-flex size-11 shrink-0 items-center justify-center gap-2 rounded-full bg-[#e0533f] text-sm font-bold text-white shadow-[0_10px_22px_rgba(224,83,63,0.3)] transition-transform duration-300 ease-out group-hover:-translate-y-0.5 sm:size-auto sm:w-max sm:px-6 sm:py-3"
+                  >
+                    {/* Op mobiel alleen de pijl, zodat de titel ruimte houdt */}
+                    <span className="hidden sm:inline">{cat.cta}</span>
                     <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
                   </span>
                 </div>
@@ -136,9 +140,9 @@ export default async function HomePage() {
       <section className="bg-sky-tint text-sky-tint-foreground relative">
         <WaveEdge position="top" />
         <WaveEdge position="bottom" />
-        <div className="relative z-10 mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="mx-auto mb-8 max-w-2xl text-center">
-            <h2 className="flex items-center justify-center gap-2 text-4xl font-bold tracking-tight">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8">
+          <div className="mx-auto mb-6 max-w-2xl text-center sm:mb-8">
+            <h2 className="flex items-center justify-center gap-2 text-3xl font-bold tracking-tight sm:text-4xl">
               Populaire producten
               <Image
                 src="/images/heart.png"
@@ -156,9 +160,10 @@ export default async function HomePage() {
           <div className="mt-8 text-center">
             <Link
               href="/producten"
-              className="text-sm font-medium underline-offset-4 hover:underline"
+              className="inline-flex items-center gap-1.5 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-[#0C2A5A] shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 sm:bg-transparent sm:px-0 sm:py-0 sm:font-medium sm:shadow-none sm:ring-0 sm:underline-offset-4 sm:hover:translate-y-0 sm:hover:underline"
             >
               Bekijk alles
+              <ArrowRight className="size-4 sm:hidden" />
             </Link>
           </div>
 
@@ -168,9 +173,9 @@ export default async function HomePage() {
       </section>
 
       {/* Waarom kiezen voor Pawhaus? */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20 lg:px-8">
-        <div className="mx-auto mb-10 max-w-2xl text-center">
-          <h2 className="flex flex-wrap items-center justify-center gap-x-2.5 text-4xl font-bold tracking-tight">
+      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:py-20 lg:px-8">
+        <div className="mx-auto mb-8 max-w-2xl text-center sm:mb-10">
+          <h2 className="flex flex-wrap items-center justify-center gap-x-2.5 text-3xl font-bold tracking-tight sm:text-4xl">
             <span>Waarom kiezen voor</span>
             <span className="inline-flex items-center">
               <Image
@@ -187,19 +192,19 @@ export default async function HomePage() {
             Zorgeloos shoppen voor je beste maatje — daar staan we voor.
           </p>
         </div>
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
           {WHY.map((w) => (
             <div
               key={w.title}
-              className="rounded-2xl bg-[#eef2f7] p-8 text-center"
+              className="rounded-2xl bg-[#eef2f7] p-4 text-center sm:p-8"
             >
               <w.icon
-                className="mx-auto size-9"
+                className="mx-auto size-7 sm:size-9"
                 strokeWidth={1.6}
                 style={{ color: w.color }}
               />
-              <h3 className="mt-5 font-semibold text-[#0C2A5A]">{w.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-[#0C2A5A]/70">
+              <h3 className="mt-3 text-sm leading-snug font-semibold text-[#0C2A5A] sm:mt-5 sm:text-base">{w.title}</h3>
+              <p className="mt-1.5 text-xs leading-relaxed text-[#0C2A5A]/70 sm:mt-2 sm:text-sm">
                 {w.text}
               </p>
             </div>
@@ -217,10 +222,10 @@ export default async function HomePage() {
             alt="Franse bulldog en grijze kat met speelgoed"
             width={2203}
             height={1381}
-            className="h-auto w-52 shrink-0 sm:w-60 lg:w-72"
+            className="h-auto w-44 shrink-0 sm:w-60 lg:w-72"
           />
           <div className="flex-1">
-            <h2 className="flex items-center justify-center gap-2 text-3xl font-bold tracking-tight text-[#0C2A5A] lg:justify-start lg:text-4xl">
+            <h2 className="flex items-center justify-center gap-2 text-[1.7rem] font-bold tracking-tight text-[#0C2A5A] sm:text-3xl lg:justify-start lg:text-4xl">
               Blijf op de hoogte!
               <Image
                 src="/images/heart.png"

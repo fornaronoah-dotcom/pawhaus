@@ -64,26 +64,26 @@ export function ProductInfo({
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="space-y-3">
+    <div className="flex flex-col gap-5 sm:gap-6">
+      <div className="space-y-2 sm:space-y-3">
         {product.productType && (
           <p className="text-primary text-xs font-semibold tracking-[0.18em] uppercase">
             {product.productType}
           </p>
         )}
-        <h1 className="font-poppins text-3xl leading-tight font-semibold tracking-tight sm:text-4xl">
+        <h1 className="font-poppins text-2xl leading-tight font-semibold tracking-tight sm:text-4xl">
           {product.title}
         </h1>
-        <div className="flex items-end gap-3">
-          <span className="text-primary text-3xl font-semibold">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <span className="text-primary text-[1.75rem] leading-none font-semibold sm:text-3xl">
             {formatPrice(price)}
           </span>
           {onSale && compareAt && (
             <>
-              <span className="text-muted-foreground mb-1 text-lg line-through">
+              <span className="text-muted-foreground text-lg leading-none line-through">
                 {formatPrice(compareAt)}
               </span>
-              <Badge className="bg-brand text-brand-foreground mb-1 border-transparent">
+              <Badge className="bg-brand text-brand-foreground border-transparent">
                 −{discountPercent(price, compareAt)}%
               </Badge>
             </>
@@ -119,7 +119,7 @@ export function ProductInfo({
                         }))
                       }
                       className={cn(
-                        "rounded-full border px-5 py-2 text-sm font-medium transition-all duration-200",
+                        "min-h-10 rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200 sm:px-5",
                         isActive
                           ? "border-primary bg-primary text-primary-foreground shadow-sm"
                           : "border-border bg-white hover:border-primary/50 hover:-translate-y-0.5",
@@ -153,19 +153,19 @@ export function ProductInfo({
         {available ? "Op voorraad" : "Tijdelijk uitverkocht"}
       </p>
 
-      {/* Aantal + toevoegen + favoriet */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+      {/* Aantal + toevoegen + favoriet — op mobiel ook op één rij */}
+      <div id="pdp-buy" className="flex items-center gap-2 sm:gap-3">
         <QuantitySelector
           value={quantity}
           onChange={setQuantity}
           disabled={!available}
-          className="h-12 rounded-full"
+          className="h-12 shrink-0 rounded-full"
         />
         <AddToCartButton
           variantId={selectedVariant?.id ?? null}
           availableForSale={available}
           quantity={quantity}
-          className="rounded-full sm:flex-1"
+          className="min-w-0 flex-1 rounded-full"
         />
         <button
           type="button"
@@ -187,7 +187,7 @@ export function ProductInfo({
       <div className="flex items-center gap-3">
         <Truck className="text-sky size-5 shrink-0" />
         <div className="min-w-0 flex-1 text-sm">
-          <p className="font-medium">Gratis verzending vanaf € 50</p>
+          <p className="font-medium">Gratis verzending vanaf € 75</p>
           <p className="text-muted-foreground">
             Voor 15:00 besteld, vandaag verzonden
           </p>
@@ -195,12 +195,12 @@ export function ProductInfo({
       </div>
 
       {/* Trust-rij */}
-      <div className="text-muted-foreground flex flex-wrap items-center gap-x-6 gap-y-2 border-t pt-4 text-xs">
+      <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-2 border-t pt-4 text-xs sm:gap-x-6">
         <span className="flex items-center gap-1.5">
           <ShieldCheck className="size-4" /> Veilig betalen
         </span>
         <span className="flex items-center gap-1.5">
-          <RotateCcw className="size-4" /> 30 dagen retour
+          <RotateCcw className="size-4" /> 14 dagen retour
         </span>
         <span className="flex items-center gap-1.5">
           <Headphones className="size-4" /> Klantenservice

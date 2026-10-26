@@ -18,7 +18,7 @@ export default async function WinPage({
   const unavailable = !giveaway || giveaway.status !== "open";
 
   return (
-    <div className="mx-auto flex max-w-lg flex-col gap-6 px-4 py-16">
+    <div className="mx-auto flex max-w-lg flex-col gap-6 px-4 pt-28 pb-16">
       {unavailable ? (
         <div className="rounded-2xl border bg-card p-8 text-center">
           <h1 className="text-xl font-semibold">Deze win-actie is niet beschikbaar</h1>

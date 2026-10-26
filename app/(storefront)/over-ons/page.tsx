@@ -45,7 +45,7 @@ const TRUST: { icon: typeof Truck; title: string; sub: string }[] = [
   {
     icon: Truck,
     title: "Gratis verzending",
-    sub: "Vanaf €50 in België en Nederland",
+    sub: "Vanaf €75 in België en Nederland",
   },
   {
     icon: Package,
@@ -54,7 +54,7 @@ const TRUST: { icon: typeof Truck; title: string; sub: string }[] = [
   },
   {
     icon: Award,
-    title: "30 dagen retour",
+    title: "14 dagen retour",
     sub: "Makkelijk retourneren zonder gedoe",
   },
   {
@@ -66,7 +66,7 @@ const TRUST: { icon: typeof Truck; title: string; sub: string }[] = [
 
 export default function OverOnsPage() {
   return (
-    <div className="pt-36">
+    <div className="pt-28 lg:pt-36">
       {/* Kruimelpad */}
       <nav className="text-muted-foreground mx-auto mb-8 flex max-w-7xl flex-wrap items-center gap-1 px-4 text-sm sm:px-6 lg:px-8">
         <Link href="/" className="hover:text-foreground">

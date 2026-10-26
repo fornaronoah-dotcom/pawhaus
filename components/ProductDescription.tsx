@@ -33,7 +33,7 @@ const GLOBAL_SECTIONS: Section[] = [
   {
     title: "Verzending & retour",
     body:
-      "<p>Gratis verzending vanaf € 50. Bestel je vóór 17:00 op een werkdag, " +
+      "<p>Gratis verzending vanaf € 75. Bestel je vóór 15:00 op een werkdag, " +
       "dan versturen we dezelfde dag — levering doorgaans binnen 2–4 werkdagen. " +
       "Niet tevreden? Je hebt 14 dagen bedenktijd.</p>",
   },

@@ -18,13 +18,13 @@ export function MobileFilters({ facets }: { facets: Facets }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 rounded-full border border-[#0C2A5A]/15 bg-white px-4 py-1.5 text-sm font-medium text-[#0C2A5A] lg:hidden"
+        className="inline-flex items-center gap-2 h-8 rounded-full border border-[#0C2A5A]/15 bg-white px-4 text-sm font-medium text-[#0C2A5A] lg:hidden"
       >
         <SlidersHorizontal className="size-4" />
         Filteren
       </button>
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="left" className="w-80 overflow-y-auto">
+        <SheetContent side="left" className="w-[85vw] max-w-80 overflow-y-auto">
           <SheetHeader>
             <SheetTitle className="sr-only">Filteren</SheetTitle>
           </SheetHeader>

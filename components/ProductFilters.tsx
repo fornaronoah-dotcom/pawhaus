@@ -20,9 +20,12 @@ const CATEGORIES = [
 export function ProductFilters({
   activeCategory,
   activeSort,
+  leading,
 }: {
   activeCategory: string;
   activeSort: SortKey;
+  /** Optioneel element links van het sorteren (bv. de mobiele filterknop). */
+  leading?: React.ReactNode;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -38,8 +41,8 @@ export function ProductFilters({
   }
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-4">
-      <div className="flex items-center gap-1 rounded-full bg-[#0C2A5A]/5 p-1">
+    <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
+      <div className="flex w-full items-center gap-1 rounded-full bg-[#0C2A5A]/5 p-1 sm:w-auto">
         {CATEGORIES.map((cat) => {
           const isActive = activeCategory === cat.value;
           return (
@@ -50,7 +53,7 @@ export function ProductFilters({
                 router.push(buildUrl({ category: cat.value, type: "" }))
               }
               className={cn(
-                "rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
+                "flex-1 rounded-full px-4 py-2 text-sm font-medium transition-colors sm:flex-none sm:py-1.5",
                 isActive
                   ? "bg-[#e0533f] text-white shadow-sm"
                   : "text-[#0C2A5A]/70 hover:text-[#0C2A5A]",
@@ -62,16 +65,23 @@ export function ProductFilters({
         })}
       </div>
 
-      <div className="flex items-center gap-2">
-        <span className="text-muted-foreground text-sm">Sorteren:</span>
+      <div className="flex items-center justify-between gap-2">
+        {leading}
+        <span className="text-muted-foreground ml-auto hidden text-sm sm:inline">
+          Sorteren:
+        </span>
         <Select
           value={activeSort}
           onValueChange={(value) =>
             router.push(buildUrl({ sort: String(value ?? "featured") }))
           }
         >
-          <SelectTrigger className="w-44" size="sm">
-            <SelectValue />
+          <SelectTrigger className="w-44" size="sm" aria-label="Sorteren">
+            <SelectValue>
+              {(value: SortKey) =>
+                SORT_OPTIONS.find((o) => o.value === value)?.label ?? value
+              }
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {SORT_OPTIONS.map((option) => (
